@@ -1,6 +1,6 @@
 title: Node.js 基础设计模式
 date: 2016-2-13 14:23
-categories: 博客 #文章文类
+categories: 翻译 #文章文类
 tags: [Nodejs,设计模式]
 ---
 
