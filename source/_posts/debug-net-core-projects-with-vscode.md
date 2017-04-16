@@ -492,4 +492,4 @@ namespace VSCodeTutorial.ConsoleApp
 
 好了，让我们一起使用VSCode来编写.NetCore项目吧
 
-本文示例代码 [](https://github.com/xuanye/VSCodeTutorial)
+本文示例代码 [https://github.com/xuanye/VSCodeTutorial](https://github.com/xuanye/VSCodeTutorial)
