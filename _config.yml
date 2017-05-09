@@ -78,8 +78,11 @@ time_format: H:mm:ss
 per_page: 10
 pagination_dir: page
 
-# 多说
-duoshuo_shortname: xuanye
+# 评论
+github_owner: xuanye
+github_client_id: aeacb001e171eecd4fe9
+github_client_secret: 6383c2ade6ee093f1994f63656fae2c9f42596a3
+github_repo: xuanye.github.io
 
 # Extensions
 ## Plugins: https://github.com/hexojs/hexo/wiki/Plugins
