@@ -1,5 +1,5 @@
-title: [开源]基于DotNet Core的RPC框架(一)-DotBPE.RPC快速开始
-date: 2017-05-15 15:01:07
+title: 基于DotNet Core的RPC框架(一) DotBPE.RPC快速开始  
+date: 2017-05-15 20:01:07
 categories: 原创
 tags: [dotnet,rpc,dotbpe]
 ---
