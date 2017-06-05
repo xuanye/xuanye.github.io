@@ -122,7 +122,7 @@ static async Task RunServerAsync()
     }
 ```
 
-TODO:流程图
+
 
 ### 2.2 Echo Client
 
@@ -219,7 +219,7 @@ static async Task RunClientAsync()
     }
 ```
 
-TODO：流程图
+
 
 
 ## 0x03 常用Handler和基类
@@ -229,4 +229,82 @@ TODO：流程图
 ### 3.1 TlsHandler
 Netty支持Tls加密传输，TlsHandler类可以在开发人员无须关心加密传输时字节码的变化，只关心自己的业务代码即可。在管道处理的第一个配置该类即可
 
-### 3.2 LengthFieldPrepender
+### 3.2 LengthFieldPrepender 
+这个handler 会在实际发送前在将数据的长度放置在数据前，本例中使用2个字节来存储数据的长度。
+
+### 3.3 LengthFieldBasedFrameDecoder 
+这个handler比较常用，会在解码前用于解析数据，用于读取数据包的头信息，特别是包长，并等待数据达到包长后再交由下一个handler处理。
+参数说明 以下是Amp协议的参数值，并注释了意义
+
+> InitialBytesToStrip = 0, //读取时需要跳过的字节数  
+> LengthAdjustment = -5, //包实际长度的纠正，如果包长包括包头和包体，则要减去Length之前的部分  
+> LengthFieldLength = 4, //长度字段的字节数 整型为4个字节   
+> LengthFieldOffset = 1, //长度属性的起始（偏移）位   
+> MaxFrameLength = int.MaxValue, // 最大包长  
+
+
+### 3.4 ChannelHandlerAdapter和SimpleChannelInboundHandler<T>
+
+业务处理的常用Handler基类，一般客户端和服务端的业务处理handler 都要继承这个这两个类，其中SimpleChannelInboundHandler<T>是ChannelHandlerAdapter的子类，对其简单的进行封装，并进行了类型检查。
+
+
+### 3.5 IdleStateHandler 链接状态检查handler
+这个handler一般用于检查链接的状态，比如写超时，读超时。在实际项目中一般在客户端添加它，并用于发送心跳包。
+
+以下是DotBPE在客户端管道中 第一个添加IdleStateHandler 并设置触发时间
+
+
+```
+ var bootstrap = new Bootstrap();
+            bootstrap
+                .Channel<TcpSocketChannel>()
+                .Option(ChannelOption.TcpNodelay, true)
+                .Option(ChannelOption.ConnectTimeout, TimeSpan.FromSeconds(3))
+                .Group(new MultithreadEventLoopGroup())
+                .Handler(new ActionChannelInitializer<ISocketChannel>(c =>
+                {
+                    var pipeline = c.Pipeline;
+                    pipeline.AddLast(new LoggingHandler("CLT-CONN"));
+                    MessageMeta meta = _msgCodecs.GetMessageMeta();
+
+
+                    // IdleStateHandler
+                    pipeline.AddLast("timeout", new IdleStateHandler(0, 0, meta.HeartbeatInterval / 1000));
+                    //消息前处理
+                    pipeline.AddLast(
+                        new LengthFieldBasedFrameDecoder(
+                            meta.MaxFrameLength,
+                            meta.LengthFieldOffset,
+                            meta.LengthFieldLength,
+                            meta.LengthAdjustment,
+                            meta.InitialBytesToStrip
+                        )
+                    );
+
+                    pipeline.AddLast(new ChannelDecodeHandler<TMessage>(_msgCodecs));
+                    pipeline.AddLast(new ClientChannelHandlerAdapter<TMessage>(this));
+
+                }));
+            return bootstrap;
+```
+
+然后在业务处理handler中处理UserEventTriggered事件
+
+```
+//ChannelHandlerAdapter 重写UserEventTriggered
+public override void UserEventTriggered(IChannelHandlerContext context, object evt){
+  if(evt is IdleStateEvent){
+     var eventState = evt as IdleStateEvent;
+     if(eventState !=null){
+	    this._bootstrap.SendHeartbeatAsync(context,eventState);
+     }
+  }
+}
+```
+
+
+更多细节可以参考 《[Netty 4.x 用户指南](https://www.gitbook.com/book/waylau/netty-4-user-guide/details)》
+
+
+
+
