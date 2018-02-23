@@ -3,19 +3,18 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: "Xuanye's blog"
+title: 闲情偶寄 By 假正经哥哥
 subtitle: 有心思时干有意义的活，没心情时做有意思的事
-description: "xgcalendar xjplugin 假正经哥哥 Nodejs CSharp"
-author: XuanYe
-email: xuanye.wan@gmail.com
-language: zh-CN
-timezone:
+description: "xgcalendar xjplugin dotbpe 假正经哥哥 nodejs dotnet"
+author: Xuanye
+language: en
+timezone: Asia/Shanghai
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://xuanye.github.io
+url: https://xuanye.github.io
 root: /
-permalink: :year/:month/:day/:title/
+permalink: :title/
 permalink_defaults:
 
 # Directory
@@ -44,59 +43,51 @@ highlight:
   auto_detect: false
   tab_replace:
 
+# Home page setting
+# path: Root path for your blogs index page. (default = '')
+# per_page: Posts displayed per page. (0 = disable pagination)
+# order_by: Posts order. (Order by date descending by default)
+index_generator:
+  path: ''
+  per_page: 8
+  order_by: -date
+
 # Category & Tag
 default_category: uncategorized
 category_map:
 tag_map:
-
-# Archives
-## 2: Enable pagination
-## 1: Disable pagination
-## 0: Fully Disable
-archive: 2
-category: 2
-tag: 2
-
-# Server
-## Hexo uses Connect as a server
-## You can customize the logger format as defined in
-## http://www.senchalabs.org/connect/logger.html
-port: 4000
-server_ip: localhost
-logger: false
-logger_format: dev
 
 # Date / Time format
 ## Hexo uses Moment.js to parse and display date
 ## You can customize the date format as defined in
 ## http://momentjs.com/docs/#/displaying/format/
 date_format: YYYY-MM-DD
-time_format: H:mm:ss
+time_format: HH:mm:ss
+
 
 # Pagination
 ## Set per_page to 0 to disable pagination
 per_page: 10
 pagination_dir: page
 
-# 评论
-github_owner: xuanye
-github_client_id: aeacb001e171eecd4fe9
-github_client_secret: 6383c2ade6ee093f1994f63656fae2c9f42596a3
-github_repo: xuanye.github.io
+archive_generator:
+  per_page: 20
+  yearly: true
+  monthly: true
+
+tag_generator:
+  per_page: 10
 
 # Extensions
-## Plugins: https://github.com/hexojs/hexo/wiki/Plugins
-## Themes: https://github.com/hexojs/hexo/wiki/Themes
-theme: light
-exclude_generator:
-plugins:
-#- hexo-generator-feed
-#- hexo-generator-sitemap
+## Plugins: https://hexo.io/plugins/
+## Themes: https://hexo.io/themes/
+theme: next
 
 # Deployment
-## Docs: http://hexo.io/docs/deployment.html
+## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: git@github.com:xuanye/xuanye.github.io.git
+  repo: https://__GITHUB_TOKEN__@github.com/xuanye/xuanye.github.io.git
   branch: master
-
+  name: xuanye
+  email: xuanye.wan@gmail.com
