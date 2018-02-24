@@ -102,9 +102,9 @@ $:> dotnet sln add VSCodeTutorail.UnitTest/VSCodeTutorial.UnitTest.csproj
 </Project>
 ```
 
-和上面的那个项目不同，这里有一些额外的依赖，这里可以刚好了解下，如果添加nuget中包的依赖，只需像上面一样使用```PackageReference```并填入类库名称和版本号即可
+和上面的那个项目不同，这里有一些额外的依赖，这里可以刚好了解下，如果添加nuget中包的依赖，只需像上面一样使用`PackageReference`并填入类库名称和版本号即可
 
-添加完依赖后，我们在根目录下使用```dotnet restore```来初始化以下,也可以再用`dotnet build`命令来尝试编译一下先
+添加完依赖后，我们在根目录下使用`dotnet restore`来初始化以下,也可以再用`dotnet build`命令来尝试编译一下先
 
 项目依赖关系如图2：
 
