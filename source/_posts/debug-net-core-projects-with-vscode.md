@@ -4,9 +4,9 @@ categories: 原创
 tags: [dotnet,vscode]
 ---
 
-​	本来我还想介绍以下VSCode或者donet core，但是发现都是废话，没有必要，大家如果对这个不了解可以直接google这两个关键字，或者也根本不会看我这边文章。
+​   本来我还想介绍以下VSCode或者donet core，但是发现都是废话，没有必要，大家如果对这个不了解可以直接google这两个关键字，或者也根本不会看我这边文章。
 
-​	好直接进入主题了，本文的前提条件：
+​   好直接进入主题了，本文的前提条件：
 
 1. 已经安装好了.NET Core SDK
 2. 已经安装了VSCode
@@ -17,12 +17,12 @@ tags: [dotnet,vscode]
 
 使用VSCode编写dotnet core项目除了其 默认的功能外，我推荐还要安装一些非常有特色，并且有用的扩展，正是因为VSCode的插件机制，才让它变得更加强大，满足我们各式各样的需求
 
-[C#语言扩展]: https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp
-这个是使用VSCode编写C#代码必须的，安装之后在默认打开.cs文件时 还会自动下载调试器等（不过过程可能比较慢，在墙外的原因）
-[C# XML注释]: https://marketplace.visualstudio.com/items?itemName=k--kato.docomment
-这个可以插件可以快速的帮你添加注释，选择安装吧
-[C# Extensions]: https://marketplace.visualstudio.com/items?itemName=jchannon.csharpextensions
-这个插件，强烈推荐，可以帮你在建立文件的时候初始化文件内容包括对应的命名空间等
+[C#语言扩展]: https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp  
+这个是使用VSCode编写C#代码必须的，安装之后在默认打开.cs文件时 还会自动下载调试器等（不过过程可能比较慢，在墙外的原因）  
+[C# XML注释]: https://marketplace.visualstudio.com/items?itemName=k--kato.docomment  
+这个可以插件可以快速的帮你添加注释，选择安装吧  
+[C# Extensions]: https://marketplace.visualstudio.com/items?itemName=jchannon.csharpextensions  
+这个插件，强烈推荐，可以帮你在建立文件的时候初始化文件内容包括对应的命名空间等  
 
 还有一些其他辅助类的，比如EditorConfig,Guildes,One Dark Theme,Project Manager ,Setting Sync等。
 
@@ -82,6 +82,7 @@ $:> dotnet sln add VSCodeTutorail.UnitTest/VSCodeTutorial.UnitTest.csproj
 ```
 
 同样打开VSCodeTutorial.UnitTest.csproj项目文件，在其中添加对Common项目的引用
+
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
@@ -100,22 +101,21 @@ $:> dotnet sln add VSCodeTutorail.UnitTest/VSCodeTutorial.UnitTest.csproj
   </ItemGroup>
 </Project>
 ```
+
 和上面的那个项目不同，这里有一些额外的依赖，这里可以刚好了解下，如果添加nuget中包的依赖，只需像上面一样使用```PackageReference```并填入类库名称和版本号即可
 
 添加完依赖后，我们在根目录下使用```dotnet restore```来初始化以下,也可以再用`dotnet build`命令来尝试编译一下先
-
-
-
 
 项目依赖关系如图2：
 
 ![](http://ww1.sinaimg.cn/large/697065c1gy1feol1juewrj20kq07r3yp.jpg)
 
+
 ## 0x03. 开始编写代码
 
-​	这个项目的整体需求：我需要打开一个控制台程序，运行时需要用户输入一个小于50的整数，控制台接收到这个数字后计算出这个数字的阶乘，并把结果输出到控制台上。
+​   这个项目的整体需求：我需要打开一个控制台程序，运行时需要用户输入一个小于50的整数，控制台接收到这个数字后计算出这个数字的阶乘，并把结果输出到控制台上。
 
-​	经过简单的思考，我决定把阶乘的实现放到Common项目中，并且对其进行单元测试，测试的代码则放到UnitTest项目中
+​   经过简单的思考，我决定把阶乘的实现放到Common项目中，并且对其进行单元测试，测试的代码则放到UnitTest项目中
 
 ![](http://ww1.sinaimg.cn/large/697065c1gy1feol1juewrj20kq07r3yp.jpg)
 
@@ -185,7 +185,7 @@ namespace VSCodeTutorial.UnitTest
 
 ## 0x04 使用命令行运行单元测试
 
-​	在使用配置VSCode之前 我还是建议大家先使用命令行来运行一下单元测试，这有利于更好的理解配置内容。
+​   在使用配置VSCode之前 我还是建议大家先使用命令行来运行一下单元测试，这有利于更好的理解配置内容。
 
 在根目录下输入命令:`dotnet test ./VSCodeTutorial.UnitTest/VSCodeTutorial.UnitTest.csproj` 查看运行结果：
 
