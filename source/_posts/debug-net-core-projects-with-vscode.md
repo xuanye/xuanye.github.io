@@ -63,7 +63,7 @@ $:> dotnet sln add VSCodeTutorail.UnitTest/VSCodeTutorial.UnitTest.csproj
 
 ![](http://ww1.sinaimg.cn/large/697065c1gy1feokuqo7bmj20da0jldgj.jpg)
 
-<!--more-->
+<!-- more -->
 
 ## 0x02. 添加项目间的依赖关系
 使用VsCode打开项目文件VSCodeTutorial.ConsoleApp.csproj,在其中添加对Common项目的引用

@@ -9,7 +9,7 @@ DotBPE.RPC是一款基于dotnet core编写的RPC框架，而它的爸爸DotBPE�
 
 源码地址：[https://github.com/xuanye/dotbpe.git](https://github.com/xuanye/dotbpe.git) 
 
-<!--more-->
+<!-- more -->
 ## 0x01 关于Amp协议和Google Protobuf
 
 ### Amp(A Message Protocol)

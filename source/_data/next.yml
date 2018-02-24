@@ -58,7 +58,7 @@ keywords: "Hexo,xuanye,blog"
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
 # Set rss to specific value if you have burned your feed already.
-rss: https://feeds.feedburner.com/xuanye
+rss: 
 
 footer:
   # Specify the date when the site was setup.
@@ -412,7 +412,7 @@ pangu: false
 #swiftype_key:
 
 # Baidu Analytics ID
-#baidu_analytics:
+baidu_analytics: ca7707d791c93c26f752f47474db5e66
 
 # Disqus
 disqus:
@@ -516,11 +516,11 @@ needmoreshare2:
 # Google Webmaster tools verification setting
 # See: https://www.google.com/webmasters/
 #google_site_verification:
-google_site_verification: rbk-6gYUgGYEao_ZzQaHQbqVrkh6AncfDse_HhnKwrE
+#google_site_verification: rbk-6gYUgGYEao_ZzQaHQbqVrkh6AncfDse_HhnKwrE
 
 # Google Analytics
 #google_analytics:
-google_analytics: UA-75661536-1
+#google_analytics: UA-75661536-1
 
 # Bing Webmaster tools verification setting
 # See: https://www.bing.com/webmaster/

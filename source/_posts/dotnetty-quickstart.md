@@ -7,7 +7,7 @@ tags: [DotNet,DotNetty]
 长久以来,.Net开发人员都非常羡慕Java有Netty这样，高效，稳定又易用的网络通信基础框架。终于微软的Azure团队，使用C#实现的Netty的版本发布。不但使用了C#和.Net平台的技术特点，并且保留了Netty原来绝大部分的编程接口。让我们在使用时，完全可以依照Netty官方的教程来学习和使用DotNetty应用程序。
 DotNetty同时也是开源的，它的源代码托管在Github上:[https://github.com/azure/dotnetty](https://github.com/azure/dotnetty)
 
-<!--more-->
+<!-- more -->
 ## 0x01 项目预览
 
 从github上下载最新的代码到本地，使用VS2017或者VSCode打开下载好的代码，可以看到如图所示的代码那结构，其中源码部分有9个项目组成，其中

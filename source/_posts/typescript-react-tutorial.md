@@ -17,7 +17,7 @@ tags: [Typescript,React,Redux]
 
 本文中涉及到的代码可在此处查看：[https://github.com/xuanye/typescript-redux-sample](https://github.com/xuanye/typescript-redux-sample)
 
-<!--more-->
+<!-- more -->
 
 ## 安装 TypeScript
 

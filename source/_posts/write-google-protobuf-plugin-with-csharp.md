@@ -28,7 +28,7 @@ Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用
 
 而这些描述文件中最重要的文件 就是`descriptor.proto` 这个文件，这个文件是整个proto语法的描述类，描述了实际Protobuf各层次语法的结构，来一起看一下这个文件的一些代码, 上面这个代码描述了proto文件定义的语法定义，如前面两个字段意思是可选的name，可选的package字段，中间是描述可多个message_type（Message），service（Rpc Service) ,enum_type（枚举）等定义，然后一层层分解下去。 基本上就可以了解Protobuf语法的全貌和扩展点了
 
-<!--more-->
+<!-- more -->
 
 ```protobuf
 message FileDescriptorProto {

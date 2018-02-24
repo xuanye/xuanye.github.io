@@ -3,7 +3,7 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 闲情偶寄 By 假正经哥哥
+title: 假正经哥哥
 subtitle: 有心思时干有意义的活，没心情时做有意思的事
 description: "xgcalendar xjplugin dotbpe 假正经哥哥 nodejs dotnet"
 author: Xuanye
@@ -64,6 +64,14 @@ tag_map:
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
 
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content:
+  content_limit: 140
+  content_limit_delim: ' '
 
 # Pagination
 ## Set per_page to 0 to disable pagination
