@@ -1,8 +1,8 @@
 title: [翻译] Serilog Tutorial
 date: 2018-02-26 13:19:11
-categories:
+categories: 
 	- 翻译
-tags:
+tags: 
 	- dotnet
 	- serilog
 ---

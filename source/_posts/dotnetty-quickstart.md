@@ -1,7 +1,9 @@
 title: 使用DotNetty编写跨平台网络通信程序
 date: 2017-05-29 12:37:24
 categories: 原创
-tags: [DotNet,DotNetty]
+tags: 
+  - dotnet
+  - serilog
 ---
 
 长久以来,.Net开发人员都非常羡慕Java有Netty这样，高效，稳定又易用的网络通信基础框架。终于微软的Azure团队，使用C#实现的Netty的版本发布。不但使用了C#和.Net平台的技术特点，并且保留了Netty原来绝大部分的编程接口。让我们在使用时，完全可以依照Netty官方的教程来学习和使用DotNetty应用程序。
