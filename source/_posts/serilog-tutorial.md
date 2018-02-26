@@ -1,4 +1,4 @@
-title: [翻译] Serilog Tutorial
+title: (译) Serilog Tutorial
 date: 2018-02-26 13:19:11
 categories: 翻译
 tags: 
@@ -459,3 +459,5 @@ Serilog有三大优秀的社区支持渠道：
 
 
 Happy logging!
+
+原文地址[http://blog.getseq.net/serilog-tutorial/](http://blog.getseq.net/serilog-tutorial/)
