@@ -9,15 +9,16 @@ tags:
 
 在过去的几年中，结构化日志已经大受欢迎。而Serilog是 .NET 中最著名的结构化日志类库 ,我们提供了这份的精简指南来帮助你快速了解并运用它。
 
-## 内容
+## 0. 内容
 
-+ 设定目标
-+ 事件和级别
-+ 触发和手机结构化数据
-+ 为过滤和关联添加事件标记
-+ 大海捞针 [Finding needles in the haystack]
-+ 下一步是什么？
-+ 获得帮助  
+1. 设定目标
+2. 认识Serilog
+3. 事件和级别
+4. 触发和收集结构化数据
+5. 为过滤和关联添加事件标记
+6. 大海捞针 [Finding needles in the haystack]
+7. 下一步是什么？
+8. 获得帮助  
 
 
 
@@ -112,7 +113,7 @@ Log.CloseAndFlush();
 
 > 也许，你不是在编写一个控制台应用程序。我们将使用Console应用作为广为人知的示例，但是你一旦完成了本教程，您应该查看目标平台的文档（例如，[ASP.NET Core](https://nblumhardt.com/2017/08/use-serilog/ "Leaner, meaner ASP.NET Core 2 logging")）。
 
-3. Event and Level [时间和级别]
+## 3. Event and Level [时间和级别]
 
 和一些老的日志类库相比（如log4net），在使用Serilog时，你需要做的就是最大改变就是思考日志*事件*[log *events*]，而不是日志*消息*[log *message*]，一条事件[event]由以下几个内容组成:
 
@@ -157,7 +158,7 @@ Log.Debug("Processing item {ItemNumber} of {ItemCount}", itemNumber, itemCount);
 Tip: Serilog has special handling for Exception objects; methods like Log.Error() take the exception as the first parameter, e.g. [ 提示：Serilog对Exception对象有特殊的处理;]  Log.Error(ex, "Task {TaskName} was canceled", task). [ Log.Error（例如，“任务{任务名称}被取消”，任务）。] Don't include exceptions in the log message itself. [ 不要在日志消息本身中包含异常。]
 **提示**:Serilog对Exception对象有特殊的处理; 像方法`Log.Error()` 将 *exception* 作为第一个参数，例如`Log.Error(ex, "Task {TaskName} was canceled", task)`，不要将异常的包括在message消息中
 
-4. 触发和收集结构化数据
+## 4. 触发和收集结构化数据
 
 让我们回到最后一个代码片段：
 
@@ -251,7 +252,7 @@ Log.CloseAndFlush();
 
 注：这段是广告就不翻译了，读者可以根据实际需求选择自己的日志服务器。
 
-5.  为过滤和关联标记事件
+## 5.  为过滤和关联标记事件
 
 我们刚刚看到消息模板如何实现我们传统上认为可以有效搜索和分析的日志“消息”。
 
