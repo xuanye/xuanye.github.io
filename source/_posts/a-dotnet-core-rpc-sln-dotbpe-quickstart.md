@@ -1,7 +1,11 @@
 title: 基于DotNet Core的RPC框架(一) DotBPE.RPC快速开始  
 date: 2017-05-15 20:01:07
-categories: 原创
-tags: [dotnet,rpc,dotbpe]
+categories: 
+  - 原创
+tags: 
+  - dotnet
+  - rpc
+  - dotbpe
 ---
 
 ## 0x00 简介
@@ -10,6 +14,7 @@ DotBPE.RPC是一款基于dotnet core编写的RPC框架，而它的爸爸DotBPE�
 源码地址：[https://github.com/xuanye/dotbpe.git](https://github.com/xuanye/dotbpe.git) 
 
 <!-- more -->
+
 ## 0x01 关于Amp协议和Google Protobuf
 
 ### Amp(A Message Protocol)

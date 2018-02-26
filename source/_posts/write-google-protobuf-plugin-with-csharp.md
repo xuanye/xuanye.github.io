@@ -31,6 +31,7 @@ Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用
 <!-- more -->
 
 ```protobuf
+
 message FileDescriptorProto {
   optional string name = 1;       // file name, relative to root of source tree
   optional string package = 2;    // e.g. "foo", "foo.bar", etc.
@@ -61,6 +62,7 @@ message FileDescriptorProto {
   // The supported values are "proto2" and "proto3".
   optional string syntax = 12;
 }
+
 ```
 
 
