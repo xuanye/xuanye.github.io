@@ -18,6 +18,10 @@ Github地址: https://github.com/xuanye/Peach
 
 # QuickStart 使用
 
+添加引用
+
+> dotnet nuget add Peach
+
 要使用Peach编写网络程序，一般只需要三个步骤
 1. 实现协议传输消息IMessage
 2. 实现协议打包和解包逻辑IProtocol
