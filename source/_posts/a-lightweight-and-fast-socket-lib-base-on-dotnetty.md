@@ -12,8 +12,9 @@ tags:
 ![](http://ww1.sinaimg.cn/large/697065c1ly1g0ky6oxiznj21hc0gohdu.jpg)
 
 Peach是基于[DotNetty][1]的Socket网络通讯帮助类库，可以帮助开发者简化使用DotNetty，关于DotNetty可参考我之前的[这篇文章][2]。
-Peach内置实现了一个基于文本协议的CommandLineProtocol，下面的实例以这个协议展开，最后以[DotBPE][3]中Amp协议来介绍下如何扩展自定义协议。
+Peach内置实现了一个基于文本协议的CommandLineProtocol，下面的实例以这个协议展开，最后以[DotBPE][3]中Amp协议来介绍下如何扩展自定义协议。  
 
+Github地址: https://github.com/xuanye/Peach
 
 # QuickStart 使用
 
