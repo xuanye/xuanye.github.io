@@ -76,7 +76,7 @@ RED_ARROW
 以下为示例
 
 ```
-@startuml 交易相关主要类图
+@startuml 示例类图
 
 !includeurl https://raw.githubusercontent.com/xuanye/plantuml-style-c4/master/core.puml
 ' uncomment the following line and comment the first to use locally
