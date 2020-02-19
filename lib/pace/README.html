@@ -1,0 +1,17 @@
+<p>&lt;h1 align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/HubSpot/pace&quot;&gt;Progress bar&lt;/a&gt; for &lt;a href=&quot;https://github.com/theme-next&quot;&gt;NexT&lt;/a&gt;&lt;/h1&gt;</p><p>&lt;h1 align=&quot;center&quot;&gt;Installation&lt;/h1&gt;</p><p>&lt;h2&gt;If you want to use the CDN instead of clone this repo, please jump to the Step 3.&lt;/h2&gt;</p><p>&lt;h2 align=&quot;center&quot;&gt;Step 1 → Go to NexT dir&lt;/h2&gt;</p><p>Change dir to <strong>NexT</strong> directory. There must be <code>layout</code>, <code>source</code>, <code>languages</code> and other directories:</p><pre><code class="language-sh">$ cd themes/next
+$ ls
+_config.yml  crowdin.yml  docs  gulpfile.js  languages  layout  LICENSE.md  package.json  README.md  scripts  source
+</code></pre><p>&lt;h2 align=&quot;center&quot;&gt;Step 2 → Get module&lt;/h2&gt;</p><p>Install module to <code>source/lib</code> directory:</p><pre><code class="language-sh">$ git clone https://github.com/theme-next/theme-next-pace source/lib/pace
+</code></pre><p>&lt;h2 align=&quot;center&quot;&gt;Step 3 → Set it up&lt;/h2&gt;</p><p>Enable module in <strong>NexT</strong> <code>_config.yml</code> file and select your theme:</p><pre><code class="language-yml">pace:
+  enable: true
+  # Themes list:
+  # big-counter | bounce | barber-shop | center-atom | center-circle | center-radar | center-simple
+  # corner-indicator | fill-left | flat-top | flash | loading-bar | mac-osx | material | minimal
+  theme: minimal
+</code></pre><p><strong>And, if you wants to use the CDN, then need to set:</strong> (you also need to find your corresponding theme css link in &lt;a href=&quot;https://www.jsdelivr.com/package/npm/pace-js?path=themes&quot;&gt;jsdelivr&lt;/a&gt;)</p><pre><code class="language-yml">vendors:
+  ...
+  pace: //cdn.jsdelivr.net/npm/pace-js@1/pace.min.js
+  pace_css: //cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css
+</code></pre><p>&lt;h1 align=&quot;center&quot;&gt;Update&lt;/h1&gt;</p><pre><code class="language-sh">$ cd themes/next/source/lib/pace
+$ git pull
+</code></pre>

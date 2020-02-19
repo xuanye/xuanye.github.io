@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>假正经哥哥</title>
+  
+  <subtitle>有心思时干有意义的活，没心情时做有意思的事</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://xuanye.github.io/"/>
+  <updated>2020-02-19T05:27:30.544Z</updated>
+  <id>https://xuanye.github.io/</id>
+  
+  <author>
+    <name>Xuanye</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>自定义PlantUML和C4 Model样式</title>
+    <link href="https://xuanye.github.io/new-style-4-plantuml-and-c4model/"/>
+    <id>https://xuanye.github.io/new-style-4-plantuml-and-c4model/</id>
+    <published>2019-03-17T12:01:07.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;img
+        
+      
+    
+    </summary>
+    
+      <category term="原创" scheme="https://xuanye.github.io/categories/%E5%8E%9F%E5%88%9B/"/>
+    
+    
+      <category term="PlantUML" scheme="https://xuanye.github.io/tags/PlantUML/"/>
+    
+      <category term="架构设计" scheme="https://xuanye.github.io/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用Peach简化Socket网络通讯协议开发</title>
+    <link href="https://xuanye.github.io/a-lightweight-and-fast-socket-lib-base-on-dotnetty/"/>
+    <id>https://xuanye.github.io/a-lightweight-and-fast-socket-lib-base-on-dotnetty/</id>
+    <published>2019-02-27T03:01:07.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;img src=&quot;http://ww1.sinaimg.cn/large/697065c1ly1g0ky6oxiznj21hc0gohdu.jpg&quot; alt&gt;&lt;/p&gt;
+&lt;p&gt;Peach是基于&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="原创" scheme="https://xuanye.github.io/categories/%E5%8E%9F%E5%88%9B/"/>
+    
+    
+      <category term="dotnet" scheme="https://xuanye.github.io/tags/dotnet/"/>
+    
+      <category term="socket" scheme="https://xuanye.github.io/tags/socket/"/>
+    
+      <category term="peach" scheme="https://xuanye.github.io/tags/peach/"/>
+    
+      <category term="dotnetty" scheme="https://xuanye.github.io/tags/dotnetty/"/>
+    
+      <category term="netty" scheme="https://xuanye.github.io/tags/netty/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>xxl-job dotnet core executor执行器开源</title>
+    <link href="https://xuanye.github.io/xxl-job-executor-dotnet-port/"/>
+    <id>https://xuanye.github.io/xxl-job-executor-dotnet-port/</id>
+    <published>2019-01-19T10:00:00.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1&gt;DotXxlJob&lt;/h1&gt;
+&lt;p&gt;[(github)https://github.com/xuanye/DotXxlJob][https://github.com/xuanye/DotXxlJob]
+xxl-job的dotnet core
+        
+      
+    
+    </summary>
+    
+      <category term="原创" scheme="https://xuanye.github.io/categories/%E5%8E%9F%E5%88%9B/"/>
+    
+    
+      <category term="dotnet" scheme="https://xuanye.github.io/tags/dotnet/"/>
+    
+      <category term="rpc" scheme="https://xuanye.github.io/tags/rpc/"/>
+    
+      <category term="taskmanage" scheme="https://xuanye.github.io/tags/taskmanage/"/>
+    
+      <category term="开源" scheme="https://xuanye.github.io/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="原创" scheme="https://xuanye.github.io/tags/%E5%8E%9F%E5%88%9B/"/>
+    
+      <category term="xxljob" scheme="https://xuanye.github.io/tags/xxljob/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>(译) Service Discovery And Health Checks In ASP.NET Core With Consul</title>
+    <link href="https://xuanye.github.io/service-discovery-and-health-checks-in-aspnet-core-with-consul/"/>
+    <id>https://xuanye.github.io/service-discovery-and-health-checks-in-aspnet-core-with-consul/</id>
+    <published>2019-01-05T01:23:00.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;在这篇文章中，我们将快速了解一下&lt;code&gt;服务发现&lt;/code&gt;是什么，使用&lt;a href=&quot;https://consul.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Consul&lt;/a&gt;在ASP.NET Core MVC框架中，并结合&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="翻译" scheme="https://xuanye.github.io/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+    
+      <category term="dotnet" scheme="https://xuanye.github.io/tags/dotnet/"/>
+    
+      <category term="consul" scheme="https://xuanye.github.io/tags/consul/"/>
+    
+      <category term="microservice" scheme="https://xuanye.github.io/tags/microservice/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>(译) Serilog Tutorial</title>
+    <link href="https://xuanye.github.io/serilog-tutorial/"/>
+    <id>https://xuanye.github.io/serilog-tutorial/</id>
+    <published>2018-02-26T05:19:11.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;在过去的几年中，结构化日志已经大受欢迎。而Serilog是 .NET 中最著名的结构化日志类库 ,我们提供了这份的精简指南来帮助你快速了解并运用它。&lt;/p&gt;
+&lt;h2&gt;0.
+        
+      
+    
+    </summary>
+    
+      <category term="翻译" scheme="https://xuanye.github.io/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+    
+      <category term="dotnet" scheme="https://xuanye.github.io/tags/dotnet/"/>
+    
+      <category term="serilog" scheme="https://xuanye.github.io/tags/serilog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用DotNetty编写跨平台网络通信程序</title>
+    <link href="https://xuanye.github.io/dotnetty-quickstart/"/>
+    <id>https://xuanye.github.io/dotnetty-quickstart/</id>
+    <published>2017-05-29T04:37:24.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;长久以来,.Net开发人员都非常羡慕Java有Netty这样，高效，稳定又易用的网络通信基础框架。终于微软的Azure团队，使用C#实现的Netty的版本发布。不但使用了C#和.Net平台的技术特点，并且保留了Netty原来绝大部分的编程接口。让我们在使用时，完全可以依照N
+        
+      
+    
+    </summary>
+    
+      <category term="原创" scheme="https://xuanye.github.io/categories/%E5%8E%9F%E5%88%9B/"/>
+    
+    
+      <category term="dotnet" scheme="https://xuanye.github.io/tags/dotnet/"/>
+    
+      <category term="serilog" scheme="https://xuanye.github.io/tags/serilog/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>基于DotNet Core的RPC框架(一) DotBPE.RPC快速开始</title>
+    <link href="https://xuanye.github.io/a-dotnet-core-rpc-sln-dotbpe-quickstart/"/>
+    <id>https://xuanye.github.io/a-dotnet-core-rpc-sln-dotbpe-quickstart/</id>
+    <published>2017-05-15T12:01:07.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2&gt;0x00 简介&lt;/h2&gt;
+&lt;p&gt;DotBPE.RPC是一款基于dotnet
+        
+      
+    
+    </summary>
+    
+      <category term="原创" scheme="https://xuanye.github.io/categories/%E5%8E%9F%E5%88%9B/"/>
+    
+    
+      <category term="dotnet" scheme="https://xuanye.github.io/tags/dotnet/"/>
+    
+      <category term="rpc" scheme="https://xuanye.github.io/tags/rpc/"/>
+    
+      <category term="dotbpe" scheme="https://xuanye.github.io/tags/dotbpe/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用CSharp编写Google Protobuf插件</title>
+    <link href="https://xuanye.github.io/write-google-protobuf-plugin-with-csharp/"/>
+    <id>https://xuanye.github.io/write-google-protobuf-plugin-with-csharp/</id>
+    <published>2017-04-23T10:01:07.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;什么是 Google Protocol Buffer？&lt;/p&gt;
+&lt;p&gt;Google Protocol Buffer( 简称 Protobuf) 是 Google 公司内部的混合语言数据标准，目前已经正在使用的有超过 48,162 种报文格式定义和超过 12,183 个
+        
+      
+    
+    </summary>
+    
+      <category term="原创" scheme="https://xuanye.github.io/categories/%E5%8E%9F%E5%88%9B/"/>
+    
+    
+      <category term="dotnet" scheme="https://xuanye.github.io/tags/dotnet/"/>
+    
+      <category term="Google Protobuf" scheme="https://xuanye.github.io/tags/Google-Protobuf/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用VsCode编写和调试.NET Core项目</title>
+    <link href="https://xuanye.github.io/debug-net-core-projects-with-vscode/"/>
+    <id>https://xuanye.github.io/debug-net-core-projects-with-vscode/</id>
+    <published>2017-04-16T07:01:07.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;​   本来我还想介绍以下VSCode或者donet core，但是发现都是废话，没有必要，大家如果对这个不了解可以直接google这两个关键字，或者也根本不会看我这边文章。&lt;/p&gt;
+&lt;p&gt;​  
+        
+      
+    
+    </summary>
+    
+      <category term="原创" scheme="https://xuanye.github.io/categories/%E5%8E%9F%E5%88%9B/"/>
+    
+    
+      <category term="dotnet" scheme="https://xuanye.github.io/tags/dotnet/"/>
+    
+      <category term="vscode" scheme="https://xuanye.github.io/tags/vscode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Typescript React Sample</title>
+    <link href="https://xuanye.github.io/typescript-react-tutorial/"/>
+    <id>https://xuanye.github.io/typescript-react-tutorial/</id>
+    <published>2016-03-28T02:57:37.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;注：本文的原始资料和示例来自&lt;a href=&quot;https://github.com/ServiceStackApps/typescript-redux&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="博客" scheme="https://xuanye.github.io/categories/%E5%8D%9A%E5%AE%A2/"/>
+    
+    
+      <category term="Typescript" scheme="https://xuanye.github.io/tags/Typescript/"/>
+    
+      <category term="React" scheme="https://xuanye.github.io/tags/React/"/>
+    
+      <category term="Redux" scheme="https://xuanye.github.io/tags/Redux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Understanding Error-First Callbacks</title>
+    <link href="https://xuanye.github.io/node-js-error-first-callback/"/>
+    <id>https://xuanye.github.io/node-js-error-first-callback/</id>
+    <published>2016-02-25T02:38:44.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;如果说Google的V8引擎是Node.js的心脏，那么回调（callbacks）则是Node的脉络，回调能够激活跨模块和应用程序之间平衡的、非堵塞的异步控制流程。不过在大规模使用回调（callbacks）时
+        
+      
+    
+    </summary>
+    
+      <category term="翻译" scheme="https://xuanye.github.io/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+    
+      <category term="Nodejs" scheme="https://xuanye.github.io/tags/Nodejs/"/>
+    
+      <category term="最佳实践" scheme="https://xuanye.github.io/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Nodejs最佳实践</title>
+    <link href="https://xuanye.github.io/node-js-best-practices/"/>
+    <id>https://xuanye.github.io/node-js-best-practices/</id>
+    <published>2016-02-24T06:10:19.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;我们总是被问及关于&lt;code&gt;Node.js&lt;/code&gt;的最佳实践和技巧 -- 所以这篇文章就是要将这些讲清楚，总结我们在&lt;a href=&quot;http://risingstack.com/&quot; title=&quot;博客的原文地址&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="翻译" scheme="https://xuanye.github.io/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+    
+      <category term="Nodejs" scheme="https://xuanye.github.io/tags/Nodejs/"/>
+    
+      <category term="最佳实践" scheme="https://xuanye.github.io/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Node.js 基础设计模式</title>
+    <link href="https://xuanye.github.io/fundamental_nodejs_design_patterns/"/>
+    <id>https://xuanye.github.io/fundamental_nodejs_design_patterns/</id>
+    <published>2016-02-13T06:23:00.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt; 当讨论设计模式的时候你可能会想到 &lt;strong&gt;单例&lt;/strong&gt;（singletons）, &lt;strong&gt;观察者&lt;/strong&gt;（observers） 或者 &lt;strong&gt;工厂&lt;/strong&gt;（factories）
+        
+      
+    
+    </summary>
+    
+      <category term="翻译" scheme="https://xuanye.github.io/categories/%E7%BF%BB%E8%AF%91/"/>
+    
+    
+      <category term="Nodejs" scheme="https://xuanye.github.io/tags/Nodejs/"/>
+    
+      <category term="设计模式" scheme="https://xuanye.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>在Expressjs4.0中使用dustjs模板引擎</title>
+    <link href="https://xuanye.github.io/use-dustjs-engine-in-expressjs4-0/"/>
+    <id>https://xuanye.github.io/use-dustjs-engine-in-expressjs4-0/</id>
+    <published>2014-10-19T13:03:35.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2&gt;引言&lt;/h2&gt;
+&lt;p&gt;    &lt;a href=&quot;http://linkedin.github.io/dustjs/&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="博客" scheme="https://xuanye.github.io/categories/%E5%8D%9A%E5%AE%A2/"/>
+    
+    
+      <category term="Nodejs" scheme="https://xuanye.github.io/tags/Nodejs/"/>
+    
+      <category term="ExpressJs" scheme="https://xuanye.github.io/tags/ExpressJs/"/>
+    
+      <category term="Dustjs" scheme="https://xuanye.github.io/tags/Dustjs/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>在BAE中使用mongoose操作mongodb</title>
+    <link href="https://xuanye.github.io/use_mongoose_on_bae_with_short_connection/"/>
+    <id>https://xuanye.github.io/use_mongoose_on_bae_with_short_connection/</id>
+    <published>2014-10-11T03:10:00.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;  几乎网上所有的使用mongoose的例子都是长连接的方式，因为nodejs本身机制的关系，使用长连接一定程度上会提高性能，但是bae的免费mongodb不支持长链接，之前也有很多人做了尝试，比如&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="Nodejs" scheme="https://xuanye.github.io/categories/Nodejs/"/>
+    
+    
+      <category term="Nodejs" scheme="https://xuanye.github.io/tags/Nodejs/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>如何将hexo部署到gitcafe上</title>
+    <link href="https://xuanye.github.io/how_to_deploy_pages_on_gitcafe/"/>
+    <id>https://xuanye.github.io/how_to_deploy_pages_on_gitcafe/</id>
+    <published>2013-12-10T14:18:30.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2&gt;关于hexo&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;http://zespia.tw/hexo/zh-CN/&quot; title=&quot;hexo&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;hexo&lt;/a&gt; 是基于&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="博客" scheme="https://xuanye.github.io/categories/%E5%8D%9A%E5%AE%A2/"/>
+    
+    
+      <category term="hexo" scheme="https://xuanye.github.io/tags/hexo/"/>
+    
+      <category term="gitcafe" scheme="https://xuanye.github.io/tags/gitcafe/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>在windows上安装多个Nodejs版本</title>
+    <link href="https://xuanye.github.io/install_multiple_nodejs_versions_on_windows/"/>
+    <id>https://xuanye.github.io/install_multiple_nodejs_versions_on_windows/</id>
+    <published>2013-10-09T01:29:30.000Z</published>
+    <updated>2020-02-19T05:27:30.544Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt; 至于为什么会需要安装多个版本的nodejs，我就不解释了，等你遇到了自然就明白了，在linux和OSX上可以使用&lt;a href=&quot;https://github.com/creationix/nvm&quot; title=&quot;nvm&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="Nodejs" scheme="https://xuanye.github.io/categories/Nodejs/"/>
+    
+    
+      <category term="Nodejs" scheme="https://xuanye.github.io/tags/Nodejs/"/>
+    
+  </entry>
+  
+</feed>
