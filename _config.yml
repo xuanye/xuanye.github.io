@@ -5,7 +5,7 @@
 # Site
 title: 假正经哥哥
 subtitle: 有心思时干有意义的活，没心情时做有意思的事
-description: "xgcalendar xjplugin dotbpe 假正经哥哥 nodejs dotnet"
+description: 'xgcalendar xjplugin dotbpe 假正经哥哥 nodejs dotnet'
 author: Xuanye
 language: en
 timezone: Asia/Shanghai
@@ -38,19 +38,19 @@ post_asset_folder: false
 relative_link: false
 future: true
 highlight:
-  enable: true
-  line_number: true
-  auto_detect: false
-  tab_replace:
+    enable: true
+    line_number: true
+    auto_detect: false
+    tab_replace:
 
 # Home page setting
 # path: Root path for your blogs index page. (default = '')
 # per_page: Posts displayed per page. (0 = disable pagination)
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
-  path: ''
-  per_page: 8
-  order_by: -date
+    path: ''
+    per_page: 8
+    order_by: -date
 
 # Category & Tag
 default_category: uncategorized
@@ -65,13 +65,13 @@ date_format: YYYY-MM-DD
 time_format: HH:mm:ss
 
 feed:
-  type: atom
-  path: atom.xml
-  limit: 20
-  hub:
-  content:
-  content_limit: 140
-  content_limit_delim: ' '
+    type: atom
+    path: atom.xml
+    limit: 20
+    hub:
+    content:
+    content_limit: 140
+    content_limit_delim: ' '
 
 # Pagination
 ## Set per_page to 0 to disable pagination
@@ -79,12 +79,12 @@ per_page: 10
 pagination_dir: page
 
 archive_generator:
-  per_page: 20
-  yearly: true
-  monthly: true
+    per_page: 20
+    yearly: true
+    monthly: true
 
 tag_generator:
-  per_page: 10
+    per_page: 10
 
 # Extensions
 ## Plugins: https://hexo.io/plugins/
@@ -94,8 +94,8 @@ theme: next
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: git
-  repo: https://__GITHUB_TOKEN__@github.com/xuanye/xuanye.github.io.git
-  branch: master
-  name: xuanye
-  email: xuanye.wan@gmail.com
+    type: git
+    repo: https://github.com/xuanye/xuanye.github.io.git
+    branch: master
+    name: xuanye
+    email: xuanye.wan@gmail.com
