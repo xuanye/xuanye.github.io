@@ -13,9 +13,9 @@ canvasbg:
 linkiconbase: /images/links/
 ## array of links
 links:
-    - name:xuanye
-      link:https://github.com/xuanye/
-      icon:github.png
+    - name: xuanye's github
+      link: https://github.com/xuanye/
+      icon: github.png
 
 # pagination
 pagination:
