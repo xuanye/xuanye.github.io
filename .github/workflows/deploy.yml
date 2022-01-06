@@ -7,7 +7,7 @@ on:
 
 env:
     SOURCE_REPO: xuanye/xuanye.github.io
-    SOURCE_BRANCH: master
+    SOURCE_BRANCH: source
     DEPLOY_REPO: xuanye/xuanye.github.io
     DEPLOY_BRANCH: master
 
@@ -23,9 +23,6 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
-              with:
-                  repository: ${{SOURCE_REPO}}
-                  ref: ${{SOURCE_BRANCH}}
 
             - name: Use Node.js ${{ matrix.node_version }}
               uses: actions/setup-node@v1
