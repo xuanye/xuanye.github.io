@@ -14,6 +14,7 @@ tags:
   - 最佳实践
 ---
 
+> 该文章翻译自 https://code-maze.com/ 的免费电子书 《ASP.NET CORE WEB API BEST PRACTICES》
 ## 0x00 INTRODUCTION 简介
 
 
