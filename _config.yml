@@ -95,5 +95,5 @@ theme: linear
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
     type: git
-    repo: https://github.com/xuanye/xuanye.github.io.git
+    repo: git@github.com:xuanye/xuanye.github.io.git
     branch: master
