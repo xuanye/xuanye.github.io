@@ -31,7 +31,7 @@ jobs:
 
             - name: Before Install dependencies
               run: |
-                  git config --global user.name '假正经哥哥'
+                  git config --global user.name 'xuanye'
                   git config --global user.email 'xuanye.wan@gmail.com'
 
             - name: Install dependencies
