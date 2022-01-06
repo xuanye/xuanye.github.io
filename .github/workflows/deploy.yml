@@ -18,7 +18,7 @@ jobs:
         strategy:
             matrix:
                 os: [ubuntu-latest]
-                node_version: [7.x]
+                node_version: [14.x]
 
         steps:
             - name: Checkout
@@ -33,8 +33,6 @@ jobs:
               run: |
                   git config --global user.name '假正经哥哥'
                   git config --global user.email 'xuanye.wan@gmail.com'
-                  npm install -g hexo-cli
-                  npm install -g gulp
 
             - name: Install dependencies
               run: |
@@ -50,11 +48,6 @@ jobs:
                   chmod 600 ~/.ssh/id_rsa
                   ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-                  git clone --branch v6.0.3 --depth=10 https://github.com/theme-next/hexo-theme-next.git themes/next
-                  git checkout -b v6.0.3
-                  git clone https://github.com/theme-next/theme-next-three --depth=1 themes/next/source/lib/three
-                  git clone https://github.com/theme-next/theme-next-reading-progress --depth=1 themes/next/source/lib/reading_progress
-
             - name: Deploy hexo
               run: |
-                  hexo generate && gulp && hexo deploy
+                  npm run deploy
