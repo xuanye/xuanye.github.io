@@ -97,5 +97,3 @@ deploy:
     type: git
     repo: https://github.com/xuanye/xuanye.github.io.git
     branch: master
-    name: xuanye
-    email: xuanye.wan@gmail.com
