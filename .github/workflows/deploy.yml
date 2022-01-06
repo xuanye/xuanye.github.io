@@ -47,7 +47,7 @@ jobs:
                   echo "$HEXO_DEPLOY_PRI" > ~/.ssh/id_rsa
                   chmod 600 ~/.ssh/id_rsa
                   ssh-keyscan github.com >> ~/.ssh/known_hosts
-                  git clone git@github.com:syy11cn/hexo-theme-linear.git linear
+                  git clone git@github.com:syy11cn/hexo-theme-linear.git themes/linear
             - name: Deploy hexo
               run: |
                   npm run deploy
