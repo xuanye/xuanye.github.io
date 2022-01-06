@@ -48,6 +48,7 @@ jobs:
                   chmod 600 ~/.ssh/id_rsa
                   ssh-keyscan github.com >> ~/.ssh/known_hosts
                   git clone git@github.com:syy11cn/hexo-theme-linear.git themes/linear
+                  cp ./_config.linar.yml ./themes/linear/_config.yml
             - name: Deploy hexo
               run: |
                   npm run deploy
