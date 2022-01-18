@@ -13,13 +13,13 @@ tags:
 
 在这篇文章中，我们将开始学习ASP.NET Core中的IdentityServer4，以及整合它来构建安全解决方案的方法。我们将从头开始创建一个工作解决方案，带你了解这个强大的OpenID框架的各种概念和实现。这是ASP.NET核心中的IdentityServer4系列的第一部分。你可以在这里找到完整的实现源代码。
 
-## 什么是IdentityServer4？
+## 1. 什么是IdentityServer4？
 
 IdentityServer4是一个免费的、开源的OpenID Connect和OAuth 2.0框架，用于ASP.NET Core。换句话说，它是一个用于您的解决方案的认证供应商。它是一个建立在ASP.NET Core的OpenID Connect和OAuth 2.0之上的框架。其主要思想是集中认证提供者。比方说，你有5个APIS/微服务。你真的不需要在每一个应用程序中定义认证逻辑。相反，通过IdentityServer4，你可以集中访问控制，这样每一个API都由中央身份服务器来保障。
 
 另一个很酷的特点是，当客户端（Web应用程序）想要访问一个安全的API时，IdentityServer4会无缝地生成访问令牌来实现这一目标。我们将在文章中进一步讨论这个问题。
 
-## Identity Server概念
+### 1.1 Identity Server概念
 
 这个想法非常简单和直接。用户使用客户端（比方说ASP.NET Core MVC）来访问数据。用户将通过身份服务器的认证来使用客户端。一旦用户被认证使用客户端，客户端就会向API资源发送请求。记住，客户端和API资源都是由一个实体，即IdentityServer来保护的。客户端要求获得一个访问令牌，用它来访问API响应。这样，我们就把认证机制集中到一个服务器上。相当有趣，是吗？
 
@@ -29,7 +29,8 @@ IdentityServer4是一个免费的、开源的OpenID Connect和OAuth 2.0框架，
 
 
 
-## Identity Server4的职责
+### 1.2 Identity Server4的职责
+
 Identity Server是一个为您的项目提供的一体化安全解决方案。以下是它的主要特点和职责。
 
 - 保护您的资源
@@ -39,7 +40,7 @@ Identity Server是一个为您的项目提供的一体化安全解决方案。�
 - 向客户发放身份和访问令牌
 - 验证令牌
 
-## IdentityServer4 项目模板
+## 2. IdentityServer4 项目模板
 
 有几种方法可以启动IdentityServer4项目。最常用的一种是模板。这更像是一个快速启动方案，你使用CLI安装IdentityServer4模板，并选择一个模板，自动为你创建一个已实施的项目。
 
@@ -69,11 +70,15 @@ dotnet new is4inmem
 
 
 
-## 我们将建造什么？
+## 3. 我们将建造什么？
 
 1. 创建一个具有内存用户和商店的IdentityServer4主机项目（用于测试）。
 2. 建立一个ASP.NET Core API (这是需要被IdentityServer4保护的资源)
 3. 建立一个调用API的Web客户端
+
+
+
+## 4. 快速在ASP.NET Core项目中使用IdentityServer4
 
 让我们先在Visual Studio 2019 中创建一个空白解决方案。
 
@@ -85,7 +90,7 @@ dotnet new is4inmem
 
 ![](../uploads/20220114/5.jpg)
 
-## 为ASP.NET Core项目安装IdentityServer4软件包
+## 5. 为ASP.NET Core项目安装IdentityServer4软件包
 
 在新创建的项目中，让我们来安装IdentityServer4软件包。在软件包管理器控制台中运行以下命令。
 
@@ -93,7 +98,9 @@ dotnet new is4inmem
 Install-Package IdentityServer4
 ```
 
-### 添加 In-Memory Configuration
+
+
+## 6. 添加 In-Memory Configuration
 
 我们将在我们的代码中添加所有的配置，以达到演示目的。请注意，当你在生产中集成IdentityServer4时，情况就不是这样了。这是一个更容易理解每一个组件的方法。在IdentityServer项目的根目录下，添加一个新的类，并将其命名为**IdentityConfiguration.cs**
 
@@ -103,7 +110,7 @@ public class IdentityConfiguration
 }
 ```
 
-### 测试用户
+### ### 6.1 测试用户
 
 让我们在我们的配置文件中添加一个测试用户。出于演示的目的，我们将在代码中定义用户数据。在另一篇文章中，我们将学习如何整合Entity Framework和ASP.NET Core Identity来通过数据库管理用户。但是现在让我们把事情简单化，理解上下文。
 
@@ -129,7 +136,7 @@ public static List<TestUser> TestUsers =>
 };
 ```
 
-### Identity Resources
+### 6.2 Identity Resources
 
 Identity Resources是指像userId、电子邮件、电话号码这样的数据，是某个特定身份/用户独有的东西。在下面的代码中，我们将添加OpenId和Profile 资源。将此代码复制到你的**IdentityConfiguration**类中。
 
@@ -142,7 +149,7 @@ public static IEnumerable<IdentityResource> IdentityResources =>
     };
 ```
 
-### API Scopes
+### 6.3 API Scopes
 
 如前所述，我们的主要意图是保护一个API（我们还没有建立。） 所以，这个API可以有作用域。作用域是指授权用户可以做什么。例如，我们现在可以有两个作用域--读、写。让我们把我们的API命名为myAPI。复制下面的代码到**IdentityConfiguration.cs**中
 
@@ -155,7 +162,7 @@ public static IEnumerable<ApiScope> ApiScopes =>
     };
 ```
 
-### API Resources
+### 6.4 API Resources
 
 现在，让我们来定义API本身。我们将给它一个名字myApi，并提到支持的范围，以及秘密。确保对这个秘密代码进行哈希处理。这个散列的代码将被保存在IdentityServer内部。
 
@@ -171,7 +178,7 @@ public static IEnumerable<ApiResource> ApiResources =>
     };
 ```
 
-### Client
+### 6.5 Client
 
 最后，我们必须定义谁将被授权访问我们的受保护资源，在我们的例子中是myApi。给出一个合适的客户名称和ID。这里我们将GrantType设置为ClientCredentials。
 
@@ -190,7 +197,7 @@ public static IEnumerable<Client> Clients =>
     };
 ```
 
-### ASP.NET Core 中注册IdentityServer4 
+## 7. ASP.NET Core 中注册IdentityServer4 
 
 让我们在ASP.NET Core DI容器中注册IdentityServer4。打开Startup.cs，在ConfigureServices方法中添加以下内容。这里将使用我们在IdentityConfiguration类中定义的所有静态资源、客户端和用户。
 
@@ -204,13 +211,11 @@ services.AddIdentityServer()
     .AddDeveloperSigningCredential();
 ```
 
-### In-Memory configuration stores
+### 7.1 In-Memory configuration stores
 
 如前所述，我们将对身份服务器的配置进行硬编码，以使事情简单易懂。有几个内存存储需要配置。这些配置在HOST项目中是硬编码的，只在应用程序启动时加载一次。这主要用于开发和原型设计阶段。如果配置很少随时间变化，这种方法也可能适用于生产环境。
 
-
-
-### Signing Credentials
+### 7.2 Signing Credentials
 
 基本上，IdentityServer需要证书来验证它的使用。但是，同样，为了开发的目的，由于我们没有带任何证书，我们使用AddDeveloperSigningCredential()扩展。你可以在这里阅读更多关于它的信息。
 
@@ -230,15 +235,17 @@ app.UseEndpoints(endpoints =>
 
 
 
-### 运行 IdentityServer4
+## 8. 运行 IdentityServer4
 
 配置完IdentityServer4后，让我们编译并运行它。
 
 > 确保注意你的IdentityServer运行的端口。对我来说，它是44322。你可以通过修改你的ASP.NET Core项目的属性文件夹下的 launchsettings.json来设置你的自定义端口。
 
-### OpenID Discovery Document
 
-**OpenID Connect Discovery Document**在`/.known/openid-configuration`中可供所有OpenID提供商使用。该文件包含您的身份服务器的定义，如令牌端点（您POST到的端点，以检索访问令牌）、支持的范围、运行中的身份服务器的URL，等等。
+
+## 9. OpenID Discovery Document
+
+**OpenID Connect Discovery Document**在`/.well-known/openid-configuration`中可供所有OpenID提供商使用。该文件包含您的身份服务器的定义，如令牌端点（您POST到的端点，以检索访问令牌）、支持的范围、运行中的身份服务器的URL，等等。
 
 要了解更多关于这个标准化的信息，请阅读这里。
 
@@ -250,7 +257,7 @@ https://localhost:44322/.well-known/openid-configuration
 
 
 
-## 用POSTMAN获取访问令牌
+### 9.1 用POSTMAN获取访问令牌
 
 从**Discovery Document**中，你可以知道配置的端点来检索访问令牌。打开POSTMAN，向访问令牌端点发送一个POST请求。确保你的请求正文中有以下参数。
 
@@ -262,9 +269,7 @@ https://localhost:44322/.well-known/openid-configuration
 
 请注意，我们已经传入了一些参数，如grant_type、使用范围、客户ID和秘密。
 
-
-
-### 理解Token
+### 9.2 理解Token
 
 现在我们有了一个有效的访问令牌。让我们到`jwt.io`去解码访问令牌。还有一点，任何JWT令牌都可以被解码，因此要确保不要在令牌上添加任何敏感数据，如密码等。
 
@@ -274,7 +279,7 @@ https://localhost:44322/.well-known/openid-configuration
 
 
 
-## 用IdentityServer4保证ASP.NET Core WebAPI的安全
+## 10. 用IdentityServer4保证ASP.NET Core WebAPI的安全
 
 在本节中，我们将学习如何用IdentityServer4保护ASP.NET Core WebAPI，并使用访问令牌访问受保护的端点。
 
@@ -312,7 +317,7 @@ services.AddAuthentication("Bearer")
 
 
 第4行决定了WebAPI资源的名称。记得我们已经在服务器项目配置中定义了这个名称吗？
-第5行提出了IdentityServer已经启动并运行的URL。重要的是，首先运行IdentityServer，然后是WebAPI项目，如果有客户的话，接着是客户。(我们将在本文的后面添加一个客户端的Web项目)
+第5行提出了IdentityServer已经启动并运行的URL。重要的是，首先运行IdentityServer，然后是WebAPI项目，如果有客户端的话，接着是户端。(我们将在本文的后面添加一个客户端的Web项目)
 
 最后在`Configure`方法中，添加以下内容。确保定义中间件的顺序是一样的。
 
@@ -332,7 +337,9 @@ app.UseAuthorization();
 public class WeatherForecastController : ControllerBase
 ```
 
-### 获取Token
+
+
+### 10.1 获取Token
 
 打开POSTMAN，向weatherforecast端点发送一个GET请求。理想情况下，你应该得到一个401未经授权的错误。
 
@@ -342,7 +349,7 @@ public class WeatherForecastController : ControllerBase
 
 向带有有效参数的`IdentityServer`令牌端点发送一个GET请求。这将得到一个访问令牌。还记得我们之前做的这些吗？现在，我们将使用这个令牌来访问安全的API控制器。
 
-### 使用访问令牌访问API
+### 10.2 使用访问令牌访问API
 再次向`weatherforecast`端点发送一个GET请求，但这次要有一个额外的授权标头。在POSTMAN中切换到授权标签，从下拉菜单中选择`Bearer Token`，并粘贴你从`IdentityServer4`收到的访问令牌。现在点击发送。**200 OK**
 
 ![](../uploads/20220114/2.webp)
@@ -353,7 +360,7 @@ public class WeatherForecastController : ControllerBase
 
 
 
-## 建立一个访问安全的API的Web客户端
+## 11. 建立一个访问安全的API的Web客户端
 
 首先，在我们的解决方案中创建一个新项目，并命名为WebClient。我们将使用一个不使用认证的MVC项目。
 
@@ -497,7 +504,7 @@ services.AddSingleton<ITokenService, TokenService>();
 
 
 
-## 总结
+## 12. 总结
 
 在这篇详细的文章中，我们开始使用ASP.NET Core中的IdentityServer4，涵盖了基本的概念和术语，如资源、测试用户、客户端。此外，我们还建立了一个具有3个项目（认证服务器、WebAPI、WebClient）的工作解决方案，其中WebAPI受到IdentityServer的保护，并向有效的WebClient发放令牌。你可以在这里找到整个实现的[源代码](https://github.com/iammukeshm/GettingStartedWithIdentityServer4.ASPNETCore)。
 
