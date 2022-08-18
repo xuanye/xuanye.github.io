@@ -1,7 +1,7 @@
 title: Nodejs最佳实践
 date: 2016-02-24 14:10:19
 categories: 翻译
-tags: [Nodejs,最佳实践]
+tags: [Nodejs,Best Practices]
 ---
 
 我们总是被问及关于`Node.js`的最佳实践和技巧 -- 所以这篇文章就是要将这些讲清楚，总结我们在[RisingStack][1]怎么样编写Node.js应用程序。
