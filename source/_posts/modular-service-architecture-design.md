@@ -140,9 +140,9 @@ public async Task<TService> CreateAsync<TService>(ushort spacialMessageId = 0) w
 
 `Peas.Order.Domain`  这个项目是领域层也可以是三层架构中的业务逻辑层，包含所有的业务逻辑
 
-`Peas.Order.Infrastructure` 这个项目是基层层，包括对外部资源的访问实现，如消息队列，ES，邮件等，同时包括Repository的实现（如果数据库访问使用Repository模式的话）
+`Peas.Order.Infrastructure` 这个项目是基础应用层，包括对外部资源的访问实现，如消息队列，ES，邮件等，同时包括Repository的实现（如果数据库访问使用Repository模式的话）
 
-`Peas.Order.Bootstrapper` 这个项目并不是必须的，是用于测试单独部署Order服务，在开发阶段我们挂宅服务实际用的是 `Peas.Bootstrapper` 如果单体部署的化 也是用这个。
+`Peas.Order.Bootstrapper` 这个项目并不是必须的，是用于测试单独部署Order服务，在开发阶段我们挂载服务实际用的是 `Peas.Bootstrapper` 如果单体部署的化 也是用这个。
 
 `Peas.Protocol` 是服务接口的定义，可以被所有项目访问。如果考虑到将来会有大型团队的情况，我建议使用Proto文件来定义服务，并使用gRPC来对外提供接口 （DotBPE.Rpc支持使用Proto文件定义并生成代码和直接用写代码定义接口两种方式）
 
