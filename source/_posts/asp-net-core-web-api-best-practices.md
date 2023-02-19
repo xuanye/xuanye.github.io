@@ -1,28 +1,31 @@
 title: ASP.NET Core WebAPI 最佳实践
 date: 2022-01-05 10:01:07
 categories: 翻译
-tags: 
+tags:
 
-  - dotnet
-  - webapi
-  - 最佳实践
----
+*   dotnet
 
-> 该文章翻译自 https://code-maze.com/ 的免费电子书 《ASP.NET CORE WEB API BEST PRACTICES》
+*   webapi
+
+*   最佳实践
+
+***
+
+> 该文章翻译自 <https://code-maze.com/> 的免费电子书 《ASP.NET CORE WEB API BEST PRACTICES》
+
 ## 0x00 INTRODUCTION 简介
 
-
-当我们在做一个项目的时候，我们的主要目标是使它按照预期的方式工作，并满足客户的所有要求。  
+当我们在做一个项目的时候，我们的主要目标是使它按照预期的方式工作，并满足客户的所有要求。
 
 但是，你是否同意创建一个能工作的项目是不够的吗？难道这个项目不应该是可维护和可读的吗？
 
-事实证明，我们需要对我们的项目投入更多的关注，以一种更可读和可维护的方式来编写它们。这句话背后的主要原因是，我们可能不是唯一会在该项目上工作的人。一旦我们完成了这个项目，其他的人很可能也会参与这个项目。 
+事实证明，我们需要对我们的项目投入更多的关注，以一种更可读和可维护的方式来编写它们。这句话背后的主要原因是，我们可能不是唯一会在该项目上工作的人。一旦我们完成了这个项目，其他的人很可能也会参与这个项目。
 
-**那么，我们应该注意什么呢？**  
+**那么，我们应该注意什么呢？**
 
-在本指南中，我们将写下我们认为在开发.NET Core Web API项目时的最佳做法。我们怎样才能使它变得更好，怎样才能使它更容易维护。  
+在本指南中，我们将写下我们认为在开发.NET Core Web API项目时的最佳做法。我们怎样才能使它变得更好，怎样才能使它更容易维护。
 
-那么，让我们来看看在处理ASP.NET Web API项目时，我们可以应用的一些最佳实践。  
+那么，让我们来看看在处理ASP.NET Web API项目时，我们可以应用的一些最佳实践。
 
 ## 0x01 `Startup`启动类和服务配置
 
@@ -50,6 +53,7 @@ public void ConfigureServices(IServiceCollection services)
 这根本就不具有可读性。
 
 更好的方式是创建一个包括静态方法的扩展类
+
 ```csharp
 public static class ServiceExtensions
 {
@@ -65,16 +69,17 @@ public static class ServiceExtensions
     }
 }
 ```
+
 然后在`IServiceCollection`类型上调用这个扩展方法
+
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
     services.ConfigureCors();
 }
 ```
+
 要了解更多关于.NET CORE项目配置的问题，请点击[.NET Core Project Configuration](https://code-maze.com/net-core-web-development-part2/)。
-
-
 
 ## 0x02 项目结构
 
@@ -86,8 +91,6 @@ public void ConfigureServices(IServiceCollection services)
 
 ![Project Organization](../uploads/20220105/1.jpg)
 
-
-
 ## 0x03 基于环境的设置
 
 当我们开发我们的应用程序时，该应用程序是在开发环境中。但是一旦我们发布我们的应用程序，它就会在生产环境中。因此，为每个环境单独配置总是一个好的做法。
@@ -98,18 +101,14 @@ public void ConfigureServices(IServiceCollection services)
 
 ![](../uploads/20220105/2.jpg)
 
-
-
 这个文件中的所有设置都将被用于开发环境。
 
 我们应该添加另一个文件`appsettings.Production.json`，以便在生产环境中使用它。
 
 ![](../uploads/20220105/3.jpg)
 
-
-
 生产文件将被放置在开发文件的正下方。
-有了这个设置，我们可以在不同的`appsettings`文件中存储不同的设置，根据我们的应用程序所处的环境，.NET Core将为我们提供正确的设置。关于这个话题的更多信息，请查看《[ASP.NET Core中的多个环境](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-6.0&viewFallbackFrom=aspnetcore-2.1)》。
+有了这个设置，我们可以在不同的`appsettings`文件中存储不同的设置，根据我们的应用程序所处的环境，.NET Core将为我们提供正确的设置。关于这个话题的更多信息，请查看《[ASP.NET Core中的多个环境](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-6.0\&viewFallbackFrom=aspnetcore-2.1)》。
 
 ## 0x04 数据访问层
 
@@ -129,8 +128,6 @@ public class RepoService
 ```
 
 存储库的逻辑也应该始终基于接口和通用。请看这篇文章。[.Net Core系列--第四部分](https://code-maze.com/net-core-web-development-part4/)，看看我们如何在.NET Core的项目中实现存储库模式。
-
-
 
 ## 0x05 Controllers 控制器
 
@@ -181,7 +178,7 @@ public class OwnerController: Controller
 }
 ```
 
-## 0x06 Actions 
+## 0x06 Actions
 
 我们的`Action`应该始终是干净和简单的。他们的职责包括处理HTTP请求，验证模型，捕捉错误，并返回响应。
 
@@ -214,14 +211,21 @@ public IActionResult CreateOwner([FromBody]Owner owner)
 
 最常用的方法是:
 
-- **OK** => 返回200状态代码
-- **NotFound** => 返回404状态代码
-- **BadRequest** => 返回400状态代码
-- **NoContent** => 返回204状态代码
-- **Created, CreatedAtRoute, CreatedAtAction** => 返回201状态代码
-- **Unauthorized** => 返回 401 状态代码
-- **Forbid** => 返回403状态代码
-- **StatusCode** => 返回我们作为输入提供的状态代码
+*   **OK** => 返回200状态代码
+
+*   **NotFound** => 返回404状态代码
+
+*   **BadRequest** => 返回400状态代码
+
+*   **NoContent** => 返回204状态代码
+
+*   **Created, CreatedAtRoute, CreatedAtAction** => 返回201状态代码
+
+*   **Unauthorized** => 返回 401 状态代码
+
+*   **Forbid** => 返回403状态代码
+
+*   **StatusCode** => 返回我们作为输入提供的状态代码
 
 ## 0x07 全局错误拦截
 
@@ -284,8 +288,6 @@ public static IApplicationBuilder UseCustomExceptionMiddleware(this IApplication
 app.UseCustomExceptionMiddleware();
 ```
 
-
-
 ## 0x08 使用`ACTIONFILTERS`移除重复代码
 
 ASP.NET Core中的过滤器允许我们在请求管道的特定阶段之前或之后运行一些代码。因此，我们可以用它们来执行我们需要在`Action`方法中重复的验证动作。
@@ -323,8 +325,6 @@ services.AddScoped<ModelValidationAttribute>();
 ```
 
 现在，我们可以在我们的`Action`方法中使用该过滤器。你可以在我们的[ActionFilters文章](https://code-maze.com/action-filters-aspnetcore/)中阅读更多关于它的内容。
-
-
 
 ## 0x09 使用DTOs来返回接口和接收参数
 
@@ -424,7 +424,7 @@ public class TestController: Controller
 }
 ```
 
-然后在我们的Action中，我们可以通过使用_logger对象来来记录各种日志级别的日志信息。
+然后在我们的Action中，我们可以通过使用\_logger对象来来记录各种日志级别的日志信息。
 
 .NET Core支持与各种日志提供者兼容的日志API。因此，我们可以使用不同的日志提供者来实现我们项目内的日志逻辑。
 
@@ -442,23 +442,23 @@ Serilog也是一个不错的选择。它与.NET Core内置的日志系统相兼�
 
 涉及到这三个功能的实现有很多，所以要想了解更多，你可以阅读我们关于[分页](https://code-maze.com/paging-aspnet-core-webapi/)、[搜索](https://code-maze.com/searching-aspnet-core-webapi/)和[排序](https://code-maze.com/blazor-webassembly-sorting/)的文章。
 
-
-
 ## 0x13 APIs的版本控制
 
 对我们的API的要求可能会随着时间的推移而改变，我们想改变我们的API以支持这些要求。但是，在这样做的同时，我们不想让API的消费者改变他们的代码，因为对于一些客户来说，旧的版本工作得很好，而对于其他客户来说，新的版本才是首选。为了支持这一点，最好的做法是实现API版本化。这将保留旧的功能，并仍然促进新的功能。
 
 我们可以通过几种不同的方式实现版本控制。
 
-- 用特性:`[ApiVersion("2.0")]`
-- 我们可以在请求中提供一个版本作为查询字符串：https://some-address/api-version-2.0
-- 通过使用URL的版本控制:`[Route("api/{v:apiversion}/some-resource")]` 和请求: https://some-address/2.0/resource
-- 使用Http头的版本控制
-- 使用conventions
+*   用特性:`[ApiVersion("2.0")]`
+
+*   我们可以在请求中提供一个版本作为查询字符串：<https://some-address/api-version-2.0>
+
+*   通过使用URL的版本控制:`[Route("api/{v:apiversion}/some-resource")]` 和请求: <https://some-address/2.0/resource>
+
+*   使用Http头的版本控制
+
+*   使用conventions
 
 我们在《Ultimate ASP.NET Core Web API》一书中非常详细地讨论了这个功能和其他所有的最佳实践。
-
-
 
 ## 0x14 使用异步代码
 
@@ -500,12 +500,15 @@ public async Task<IActionResult> Get()
 
 缓存使我们能够提高应用程序的性能。
 
-- 我们可以使用不同的缓存技术。
+*   我们可以使用不同的缓存技术。
 
-- 响应缓存
-- 内存中的缓存
-- 分布式缓存
-- ...
+*   响应缓存
+
+*   内存中的缓存
+
+*   分布式缓存
+
+*   ...
 
 缓存是很有用的，因为从内存中读取数据要比从磁盘中读取数据快得多。它也可以减少数据库的成本。基本上，其主要目的是减少对存储层的访问需求，从而改善数据检索过程。
 
@@ -514,8 +517,6 @@ public async Task<IActionResult> Get()
 基本上，由开发者决定哪种缓存技术最适合他们正在开发的应用程序。
 
 你可以在我们的《终极ASP.NET Core Web API》一书中读到更多关于缓存的内容，以及本文中的所有主题。
-
-
 
 ## 0x16 使用ReadFormAsync方法
 
@@ -553,8 +554,6 @@ public asynct Task<IActionResult> Upload()
 
 要看这两种方法的完整例子，你可以阅读我们的用[.NET Core Web API上传文件](https://code-maze.com/upload-files-dot-net-core-angular/)文章。
 
-
-
 ## 0x17 CryptoHelper和数据保护
 
 我们不会谈论我们如何不应该把密码作为纯文本存储在数据库中，以及由于安全原因我们需要对它们进行散列（hash）。这已经超出了本指南的范围。互联网上有各种散列算法，也有许多不同的、伟大的方法来散列（hash）密码。
@@ -579,8 +578,6 @@ public EmployeesController( IDataProtectionProvider provider)
 但如果需要一个为.NET核心的应用程序提供支持且易于使用的库，`CryptoHelper`是一个相当不错的库。
 
 CryptoHelper是一个独立的密码散列器，用于.NET Core，使用PBKDF2实现。密码散列器使用新的数据保护栈。
-
-
 
 ## 0x18 内容协商
 
@@ -613,9 +610,7 @@ config.ReturnHttpNotAcceptable = true;
 
 内容协商是一个相当大的话题，所以如果你想了解更多关于它的信息，请查看[.NETCore中的内容协商](https://code-maze.com/content-negotiation-dotnet-core/)。
 
-
-
-## 0x19 安全和使用JWT 
+## 0x19 安全和使用JWT
 
 在Web开发中，JSON Web Token（JWT）正变得越来越流行。由于.NET Core的内置支持，实现JWT认证非常容易。JWT是一个开放的标准，它允许我们以安全的方式在客户端和服务器之间以JSON对象的方式传输数据。
 
@@ -643,8 +638,6 @@ app.UseAuthentication();
 
 我们也可以将JWT用于授权部分，只需在JWT配置中加入角色要求。要想更详细地了解.NET Core中的JWT认证和授权，请查看[JWT与.NET Core和Angular系列的第一部分](https://code-maze.com/authentication-aspnetcore-jwt-1/)和[第二部分](https://code-maze.com/authentication-aspnetcore-jwt-2/)。
 
-
-
 ### ASP.NET Core Identity
 
 此外，如果你想在你的应用程序中使用一些高级安全操作，如密码重置、电子邮件验证、第三方授权等，你可以随时参考[ASP.NET Core Identity](https://code-maze.com/asp-net-core-identity-series/)。
@@ -655,14 +648,10 @@ ASP.NET Core Identity是Web应用程序的会员系统，包括会员、登录�
 
 `IdentityServer4`是一个授权服务器，可以被多个客户端用于认证操作。它与用户存储管理无关，但它可以很容易地与`ASP.NET Core Identity`库集成，为所有客户端应用程序提供强大的安全功能。`OAuth2`和`OpenID Connect`是允许我们建立更安全的应用程序的协议。OAuth2与授权部分更相关，而OpenID Connect（OIDC）则与身份（认证）部分相关。我们可以使用不同的流程和端点来应用安全，并从授权服务器获取令牌。你可以随时阅读[RFC 6749在线文档](https://tools.ietf.org/html/rfc6749)来了解更多关于OAuth2的信息
 
-
-
 ## 0x20 测试我们的应用
 
 我们应该尽可能多的为我们的应用程序写测试。我们知道，从我们的经验来看，没有时间总是这样做，但它对于检查我们正在编写的软件的质量非常重要。我们可以在开发阶段发现潜在的错误，并确保我们的应用程序在发布到生产中之前能够按照预期工作。当然，还有许多其他的原因要为我们的应用程序写测试。
 要了解更多关于ASP.NET Core应用程序（Web API、MVC或任何其他）的测试，你可以阅读我们的[ASP.NET Core测试系列](https://code-maze.com/asp-net-core-testing/)，在那里我们会详细解释这个过程。
-
-
 
 ## 0x21 总结
 
@@ -673,4 +662,3 @@ ASP.NET Core Identity是Web应用程序的会员系统，包括会员、登录�
 如果你想学习如何在真实世界的项目中应用这些实践，请查看我们的[Ultimate ASP.NET Core 3 Web API](https://code-maze.com/ultimate-aspnet-core-3-web-api)项目，它包含了这个免费电子书中所描述的概念、具体例子和实现，以及更多的东西!
 
 编码愉快!
-
