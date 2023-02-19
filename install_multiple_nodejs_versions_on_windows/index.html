@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>在windows上安装多个Nodejs版本 | 假正经哥哥</title>
+  <meta name="google-site-verification" content="" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta itemprop="name" content="假正经哥哥" />
+  <meta itemprop="description" content="有心思时干有意义的活，没心情时做有意思的事" />
+  <meta itemprop="image" content="" />
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <!-- keywords and description -->
+  
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  <div id="container">
+    <header>
+  <div class="site-title">
+    <a href="/">
+      假正经哥哥
+    </a>
+  </div>
+  
+  <div class="site-subtitle">
+    有心思时干有意义的活，没心情时做有意思的事
+  </div>
+  
+  
+  <p class="links">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/xuanye/">
+      <img src="/images/links/github.png" alt="xuanye's github">
+    </a>
+    
+  </p>
+  
+</header>
+    <div id="main">
+      <article class="post">
+  <h3 class="date">
+  <time datetime="2013-10-09T01:29:30.000Z">
+    Oct 9, 2013
+  </time>
+</h3>
+  <h1>在windows上安装多个Nodejs版本</h1>
+  <p class="post-info">
+  
+  
+  <a href="/install_multiple_nodejs_versions_on_windows/#waline" class="post-info-item comment-count waline-comment-count" id="/install_multiple_nodejs_versions_on_windows/">获取中...</a>
+  <span class="post-info-item view-count waline-visitor-count" id="/install_multiple_nodejs_versions_on_windows/">获取中...</span>
+  
+</p>
+  
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nodejs/" rel="tag">Nodejs</a></li></ul>
+
+  
+  <article>
+    <p>&emsp;至于为什么会需要安装多个版本的nodejs，我就不解释了，等你遇到了自然就明白了，在linux和OSX上可以使用<a target="_blank" rel="noopener" href="https://github.com/creationix/nvm" title="nvm">NVM</a>（Node Version Manage）来安装多个版本的Nodejs，但是windows下却一直没有合适的工具，后来某次我检索到一个工具名字叫 <a target="_blank" rel="noopener" href="https://github.com/hakobera/nvmw" title="nvmw">nvmw</a>（Simple Node Version Manager for Windows）<br>看介绍也是像模像样的，使用的方法基本和NVM差不多（毕竟他们的名字都差不多），不过在实际使用当中却发现有些问题导致不能用，懒人请直接跳到最后不要看过程鸟。<br>&emsp;第一个问题nvmw获取npm的版本号是通过地址<a target="_blank" rel="noopener" href="https://raw.github.com/joyent/node/%s/deps/npm/package.json" title="https://raw.github.com/joyent/node/%s/deps/npm/package.json">https://raw.github.com/joyent/node/%s/deps/npm/package.json</a> 解析json来获取的，但是这个地址因为众所周知的原因在天朝是不能访问到的，这不是大问题，只需要把地址修改一下通过代理访问即可，于是我把上面的地址修改为<a target="_blank" rel="noopener" href="https://rawgithub.com/joyent/node/%s/deps/npm/package.json" title="https://rawgithub.com/joyent/node/%s/deps/npm/package.json">https://rawgithub.com/joyent/node/%s/deps/npm/package.json</a>，但是问题却没有完全解决，我们遇到了第二个问题。<br>&emsp;第二个问题是获取上述json的代码通过httpheader中的content-length来初始化一段缓冲区，但是这个地址返回是不包含这个content-length的。。而这段代码又是共用的代码。于是我不得不修改代码解决上述的问题，并且不影响其他功能。</p>
+<p>&emsp;终于可以快乐地使用nvmw来管理本地的Nodejs版本啦，但是仍然一个龊蛋的问题，就是通过命令行修改的环境变量在关闭窗口后就无效了。。所以在每次使用nodejs前 ，还要必须调用下nvmw use v0.10.18类似的命令，重新指定下。当然你觉得烦 可以自己手动添加下对应版本的目录到环境变量。</p>
+<p>&emsp;好了，说了那么没用，开始说点实际了，首先你要下载 <a target="_blank" rel="noopener" href="http://pan.baidu.com/s/1xdmf3" title="修改后的nvmw">nvmw</a> （当然是修改后的版本），nvmw主页上说安装需要git，python，但是我看了下代码貌似不需要。直接下载解压到目录后（假设为d:\nvmw）,将目录<code>d:\nvmw</code> 添加到环境变量中，这样我们可以直接在命令行下使用了。</p>
+<p>&emsp;使用方法 直接在原官网复制的：</p>
+<pre><code>Usage:
+  nvmw help                    显示帮助信息
+  nvmw install [version]       下载并安装指定版本[version]
+  nvmw uninstall [version]     卸载某版本[version]
+  nvmw use [version]           修改当前版本[version]
+  nvmw ls                      显示当前已经安装版本
+
+Example:
+  nvmw install v0.10.18        安装v0.10.18版本  
+  nvmw use v0.10.18            使用v0.10.18版本  
+</code></pre>
+
+  </article>
+  
+  <hr>
+  <blockquote>
+    <p>
+      本文由 <a href="">Xuanye</a> 创作，采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0</a> 国际许可协议。
+    </p>
+    <p>
+      本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。
+    </p>
+  </blockquote>
+  
+</article>
+
+
+<div id="waline"></div>
+
+    </div>
+  </div>
+  <footer>
+  
+  
+  <p id="busuanzi_container_site_pv">
+    本站访问量 <span id="busuanzi_value_site_pv">获取中...</span>
+  </p>
+  
+  <p>
+    Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> | Theme <a target="_blank" rel="noopener" href="https://github.com/syy11cn/hexo-theme-linear">Linear</a> from <a target="_blank" rel="noopener" href="https://syy11.cn">Yiyang Sun</a>
+  </p>
+</footer>
+  
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <script>
+    Waline({
+      el: '#waline',
+      placeholder: '',
+      avatar: 'retro',
+      visitor: true,
+      requiredFields: ['nick', 'mail'],
+      serverURL: 'blog-api-ecru.vercel.app',
+      emoji: [
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ]
+    });
+  </script>
+</body>
+
+</html>

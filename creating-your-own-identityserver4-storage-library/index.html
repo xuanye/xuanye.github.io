@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>创建你自己的IdentityServer4存储类库 | 假正经哥哥</title>
+  <meta name="google-site-verification" content="" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta itemprop="name" content="假正经哥哥" />
+  <meta itemprop="description" content="有心思时干有意义的活，没心情时做有意思的事" />
+  <meta itemprop="image" content="" />
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <!-- keywords and description -->
+  
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  <div id="container">
+    <header>
+  <div class="site-title">
+    <a href="/">
+      假正经哥哥
+    </a>
+  </div>
+  
+  <div class="site-subtitle">
+    有心思时干有意义的活，没心情时做有意思的事
+  </div>
+  
+  
+  <p class="links">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/xuanye/">
+      <img src="/images/links/github.png" alt="xuanye's github">
+    </a>
+    
+  </p>
+  
+</header>
+    <div id="main">
+      <article class="post">
+  <h3 class="date">
+  <time datetime="2022-01-20T02:01:07.000Z">
+    Jan 20, 2022
+  </time>
+</h3>
+  <h1>创建你自己的IdentityServer4存储类库</h1>
+  <p class="post-info">
+  
+  
+  <a href="/creating-your-own-identityserver4-storage-library/#waline" class="post-info-item comment-count waline-comment-count" id="/creating-your-own-identityserver4-storage-library/">获取中...</a>
+  <span class="post-info-item view-count waline-visitor-count" id="/creating-your-own-identityserver4-storage-library/">获取中...</span>
+  
+</p>
+  
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IdentityServer4/" rel="tag">IdentityServer4</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dotnet/" rel="tag">dotnet</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" rel="tag">最佳实践</a></li></ul>
+
+  
+  <article>
+    <blockquote>
+<p>该文章翻译自 <a target="_blank" rel="noopener" href="https://www.scottbrady91.com/identity-server/creating-your-own-identityserver4-storage-library">https://www.scottbrady91.com/identity-server/creating-your-own-identityserver4-storage-library</a></p>
+</blockquote>
+<p>多年来，我经历了许多关于默认的IdentityServer4存储库的意见；然而，不管你对实体框架、聚类索引和varchar长度的看法如何，如果你对默认的存储库有顾虑，那么我的建议总是一样的：<strong>如果你内部有数据库专业技术，就使用它并创建自己的存储层。</strong></p>
+<p>创建你自己的IdentityServer4持久性存储是非常简单的。只有少数几个接口需要实现，每个接口只有几个读写方法。它们不是完整的存储层，也没有规定数据库的类型或结构。</p>
+<p>因此，让我们看一看，看看实现我们自己的IdentityServer4存储库有什么好处。</p>
+<h2 id="1-IdentityServer4-Entity-Framework-Library"><a href="#1-IdentityServer4-Entity-Framework-Library" class="headerlink" title="1. IdentityServer4 Entity Framework Library"></a>1. IdentityServer4 Entity Framework Library</h2><p>IdentityServer4  Entity Framework library 被设计成兼容众多不同的数据库。它依赖于Entity Framework关系库， 它可以支持并测试了SQL Server、MySQL、SQLite和PostgreSQL。</p>
+<p>因此，它没有为任何一个数据库供应商进行优化，并可能因此而受到影响。尽管如此，<code>Rock Solid Knowledge</code>仍有客户在生产中使用这个库，其中一个客户拥有超过2000万用户。所以，除非你偏执地执着于自己造轮子，那么这个库很可能会为你提供良好的服务，尽管你的DBA们坚持这样做。</p>
+<h2 id="2-IdentityServer4的存储接口"><a href="#2-IdentityServer4的存储接口" class="headerlink" title="2. IdentityServer4的存储接口"></a>2. IdentityServer4的存储接口</h2><p>从 <code>IdentityServer4</code> v2.3版本开始，IdentityServer4的存储接口和实体现在可以在<code>IdentityServer4.Storage</code>库中找到。之前它们在IdentityServer4核心库。</p>
+<p>让我们来看看IdentityServer4的存储接口，如何处理客户端(Clients)、资源(Resources)、作用域(Scopes)和临时数据(temporary data)。</p>
+<h2 id="3-Client-Store-IClientStore"><a href="#3-Client-Store-IClientStore" class="headerlink" title="3. Client Store (IClientStore)"></a>3. Client Store (<code>IClientStore</code>)</h2><p>最难处理的存储可能是<code>IClientStore</code>。这是由于<code>Client</code>实体的字段比较多，并且内部有许多集合。然而，一旦你确定了一个模式，客户端存储本身就非常简单，只有一个方法需要实现。<code>FindClientByIdAsync</code>.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IClientStore</span> &#123;</span><br><span class="line">    <span class="function">Task&lt;Client&gt; <span class="title">FindClientByIdAsync</span>(<span class="params"><span class="built_in">string</span> clientId</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>FindClientByIdAsync</code>方法应该返回完整的<code>Client</code>实体和所有相关的集合。</p>
+<p>一个<code>Client</code>也有一个允许的作用域列表。这取决于你是想让它独立,还是与我们很快就会看到的身份和API作用域相联系。</p>
+<h2 id="4-CORS-ICorsPolicyService"><a href="#4-CORS-ICorsPolicyService" class="headerlink" title="4. CORS (ICorsPolicyService)"></a>4. CORS (<code>ICorsPolicyService</code>)</h2><p>当你实现你自己的<code>IClientStore</code>时，你也需要实现你自己的<code>ICorsPolicyService</code>。这个接口需要能够使用你选择的客户端存储，并加载所有的<code>AllowedCorsOrigins</code>，以促进CORS起源检查。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">ICorsPolicyService</span> &#123;</span><br><span class="line">    <span class="function">Task&lt;<span class="built_in">bool</span>&gt; <span class="title">IsOriginAllowedAsync</span>(<span class="params"><span class="built_in">string</span> origin</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-Resource-Store-IResourceStore"><a href="#5-Resource-Store-IResourceStore" class="headerlink" title="5. Resource Store (IResourceStore)"></a>5. Resource Store (<code>IResourceStore</code>)</h2><p>为了存储身份资源和API资源，我们有资源存储。这个接口比其他的存储有更多的方法。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IResourceStore</span> &#123;</span><br><span class="line">    Task&lt;IEnumerable&lt;IdentityResource&gt;&gt; FindIdentityResourcesByScopeAsync(IEnumerable&lt;<span class="built_in">string</span>&gt; scopeNames);</span><br><span class="line">    Task&lt;IEnumerable&lt;ApiResource&gt;&gt; FindApiResourcesByScopeAsync(IEnumerable&lt;<span class="built_in">string</span>&gt; scopeNames);</span><br><span class="line">    <span class="function">Task&lt;ApiResource&gt; <span class="title">FindApiResourceAsync</span>(<span class="params"><span class="built_in">string</span> name</span>)</span>;</span><br><span class="line">    <span class="function">Task&lt;Resources&gt; <span class="title">GetAllResourcesAsync</span>()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该接口处理从授权和令牌请求中收到的作用域的转换，将其转换为<code>IdentityServer4</code>中各自的资源模型。所以，别忘了，这意味着身份资源的资源名称，但是API资源上的各个API作用域。毕竟，一个API资源为API本身建模，而API又可以有很多作用域，每个作用域代表该API上的一个可委托权限。</p>
+<h2 id="6-持久化授权-Persisted-Grants"><a href="#6-持久化授权-Persisted-Grants" class="headerlink" title="6. 持久化授权 Persisted Grants"></a>6. 持久化授权 Persisted Grants</h2><p>对于持久化授权，我们有两个选择：实现<code>IPersistedGrantStore</code>并一次性处理授权码（authorization codes）、刷新令牌（ refresh tokens）、引用令牌（reference tokens）和承诺（consent）的存储，或者使用<code>IAuthorizationCodeStore</code>、<code>IRefreshTokenStore</code>、<code>IReferenceTokenStore</code>和<code>IUserConsentStore</code>单独实现这些。</p>
+<h3 id="6-1-接口-IPersistedGrantStore"><a href="#6-1-接口-IPersistedGrantStore" class="headerlink" title="6.1 接口 IPersistedGrantStore"></a>6.1 接口 IPersistedGrantStore</h3><p><code>IAuthorizationCodeStore</code>、<code>IRefreshTokenStore</code>、<code>IReferenceTokenStore</code>和<code>IUserConsentStore</code>的默认实现都使用了<code>IPersistedGrantStore</code>。这种一刀切的存储接受序列化的数据，以后可以通过键来检索。这个键要么是客户端应用程序已知的东西（如授权码），要么是对进入的客户端应用程序来说总是可以评估为相同的东西（如consent）。</p>
+<p>持久的授权可以由<code>IdentityServer4</code>给出一个过期时间，由你来清理过期的授权，以免你的数据库因为压力而开始不堪重负。</p>
+<p>由于密钥可能是一些敏感的东西，如刷新令牌（refresh token）值，那么它应该以散列格式存储。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">PersistedGrant</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Key &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Type &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> SubjectId &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> ClientId &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> DateTime CreationTime &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> DateTime? Expiration &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Data &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IPersistedGrantStore</span> &#123;</span><br><span class="line">    <span class="function">Task <span class="title">StoreAsync</span>(<span class="params">PersistedGrant grant</span>)</span>;</span><br><span class="line">    <span class="function">Task&lt;PersistedGrant&gt; <span class="title">GetAsync</span>(<span class="params"><span class="built_in">string</span> key</span>)</span>;</span><br><span class="line">    Task&lt;IEnumerable&lt;PersistedGrant&gt;&gt; GetAllAsync(<span class="built_in">string</span> subjectId);</span><br><span class="line">    <span class="function">Task <span class="title">RemoveAsync</span>(<span class="params"><span class="built_in">string</span> key</span>)</span>;</span><br><span class="line">    <span class="function">Task <span class="title">RemoveAllAsync</span>(<span class="params"><span class="built_in">string</span> subjectId, <span class="built_in">string</span> clientId</span>)</span>;</span><br><span class="line">    <span class="function">Task <span class="title">RemoveAllAsync</span>(<span class="params"><span class="built_in">string</span> subjectId, <span class="built_in">string</span> clientId, <span class="built_in">string</span> type</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="6-2-序列化-Serialization"><a href="#6-2-序列化-Serialization" class="headerlink" title="6.2 序列化 Serialization"></a>6.2 序列化 Serialization</h3><p>默认情况下，持久化的授权会使用<code>IPersistentGrantSerializer</code>接口被序列化为JSON。如果这不符合你的要求，这也是可以被重写的.</p>
+<h3 id="6-3-单独存储"><a href="#6-3-单独存储" class="headerlink" title="6.3 单独存储"></a>6.3 单独存储</h3><p>否则，如果你发现自己要处理数以百万计的引用令牌，而你目前的存储正在成为一个瓶颈，你可以一次实现这些存储，以不同的方式存储每一个，也许有些使用<code>IPersistedGrantStore</code>，有些没有。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IAuthorizationCodeStore</span> &#123;</span><br><span class="line">	<span class="function">Task&lt;<span class="built_in">string</span>&gt; <span class="title">StoreAuthorizationCodeAsync</span>(<span class="params">AuthorizationCode code</span>)</span>;</span><br><span class="line">	<span class="function">Task&lt;AuthorizationCode&gt; <span class="title">GetAuthorizationCodeAsync</span>(<span class="params"><span class="built_in">string</span> code</span>)</span>;</span><br><span class="line">	<span class="function">Task <span class="title">RemoveAuthorizationCodeAsync</span>(<span class="params"><span class="built_in">string</span> code</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IRefreshTokenStore</span> &#123;</span><br><span class="line">	<span class="function">Task&lt;<span class="built_in">string</span>&gt; <span class="title">StoreRefreshTokenAsync</span>(<span class="params">RefreshToken refreshToken</span>)</span>;</span><br><span class="line">	<span class="function">Task <span class="title">UpdateRefreshTokenAsync</span>(<span class="params"><span class="built_in">string</span> handle, RefreshToken refreshToken</span>)</span>;</span><br><span class="line">	<span class="function">Task&lt;RefreshToken&gt; <span class="title">GetRefreshTokenAsync</span>(<span class="params"><span class="built_in">string</span> refreshTokenHandle</span>)</span>;</span><br><span class="line">	<span class="function">Task <span class="title">RemoveRefreshTokenAsync</span>(<span class="params"><span class="built_in">string</span> refreshTokenHandle</span>)</span>;</span><br><span class="line">	<span class="function">Task <span class="title">RemoveRefreshTokensAsync</span>(<span class="params"><span class="built_in">string</span> subjectId, <span class="built_in">string</span> clientId</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IReferenceTokenStore</span> &#123;</span><br><span class="line">	<span class="function">Task&lt;<span class="built_in">string</span>&gt; <span class="title">StoreReferenceTokenAsync</span>(<span class="params">Token token</span>)</span>;</span><br><span class="line">	<span class="function">Task&lt;Token&gt; <span class="title">GetReferenceTokenAsync</span>(<span class="params"><span class="built_in">string</span> handle</span>)</span>;</span><br><span class="line">	<span class="function">Task <span class="title">RemoveReferenceTokenAsync</span>(<span class="params"><span class="built_in">string</span> handle</span>)</span>;</span><br><span class="line">	<span class="function">Task <span class="title">RemoveReferenceTokensAsync</span>(<span class="params"><span class="built_in">string</span> subjectId, <span class="built_in">string</span> clientId</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IUserConsentStore</span> &#123;</span><br><span class="line">	<span class="function">Task <span class="title">StoreUserConsentAsync</span>(<span class="params">Consent consent</span>)</span>;</span><br><span class="line">	<span class="function">Task&lt;Consent&gt; <span class="title">GetUserConsentAsync</span>(<span class="params"><span class="built_in">string</span> subjectId, <span class="built_in">string</span> clientId</span>)</span>;</span><br><span class="line">	<span class="function">Task <span class="title">RemoveUserConsentAsync</span>(<span class="params"><span class="built_in">string</span> subjectId, <span class="built_in">string</span> clientId</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果你走的是使用单个存储的路线，那么你还需要实现<code>IPersistedGrantService</code>接口，以了解它们，因为默认实现只使用<code>IPersistedGrantStore</code>。然而，这个服务只被<code>DefaultIdentityServerInteractionService</code>的<code>GetAllUserConsentsAsync</code>方法使用，即使如此，也只在QuickStart UI的授予页面中使用。</p>
+<h2 id="7-设备流（IDeviceFlowStore）"><a href="#7-设备流（IDeviceFlowStore）" class="headerlink" title="7. 设备流（IDeviceFlowStore）"></a>7. 设备流（IDeviceFlowStore）</h2><p>设备流请求的存储也相对简单，但与其他临时数据存储不同的是，它必须可以通过两个不同的参数进行搜索：一个设备代码，一个用户代码。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IDeviceFlowStore</span> &#123;</span><br><span class="line">	<span class="function">Task <span class="title">StoreDeviceAuthorizationAsync</span>(<span class="params"><span class="built_in">string</span> deviceCode, <span class="built_in">string</span> userCode, DeviceCode data</span>)</span>;</span><br><span class="line">	<span class="function">Task&lt;DeviceCode&gt; <span class="title">FindByUserCodeAsync</span>(<span class="params"><span class="built_in">string</span> userCode</span>)</span>;</span><br><span class="line">	<span class="function">Task&lt;DeviceCode&gt; <span class="title">FindByDeviceCodeAsync</span>(<span class="params"><span class="built_in">string</span> deviceCode</span>)</span>;</span><br><span class="line">	<span class="function">Task <span class="title">UpdateByUserCodeAsync</span>(<span class="params"><span class="built_in">string</span> userCode, DeviceCode data</span>)</span>;</span><br><span class="line">	<span class="function">Task <span class="title">RemoveByDeviceCodeAsync</span>(<span class="params"><span class="built_in">string</span> deviceCode</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个接口可以再次利用<code>IPersistentGrantSerializer</code>的优势来简化存储。</p>
+<h2 id="8-注册你自己的实现"><a href="#8-注册你自己的实现" class="headerlink" title="8. 注册你自己的实现"></a>8. 注册你自己的实现</h2><p>为了注册我们自己的存储实现类，在<code>IIdentityServerBuilder</code>上已有一些扩展方法，注册成我们之前定义的类即可．其他一些实现类我们必须自己注册它们。默认情况下，这些类是以<code>transient lifetime</code>注册的。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">services.AddIdentityServer()</span><br><span class="line">    <span class="comment">// existing registrations</span></span><br><span class="line">    .AddClientStore&lt;MyCustomClientStore&gt;()</span><br><span class="line">    .AddCorsPolicyService&lt;MyCustomCorsPolicyService&gt;()</span><br><span class="line">    .AddResourceStore&lt;MyCustomResourcesStore&gt;()</span><br><span class="line">    .AddPersistedGrantStore&lt;MyCustomPersistedGrantStore&gt;()</span><br><span class="line">    .AddDeviceFlowStore&lt;MyCustomDeviceFlowStore&gt;(); </span><br><span class="line"></span><br><span class="line"><span class="comment">// For manual temp data stores</span></span><br><span class="line">services.AddTransient&lt;IAuthorizationCodeStore, MyCustomAuthorizationCodeStore&gt;();</span><br><span class="line">services.AddTransient&lt;IRefreshTokenStore, MyCustomRefreshTokenStore&gt;();</span><br><span class="line">services.AddTransient&lt;IReferenceTokenStore, MyCustomReferenceTokenStore&gt;();</span><br><span class="line">services.AddTransient&lt;IUserConsentStore, MyCustomUserConsentStore&gt;();</span><br></pre></td></tr></table></figure>
+
+<h2 id="9-奖励：秘钥和消息存储"><a href="#9-奖励：秘钥和消息存储" class="headerlink" title="9. 奖励：秘钥和消息存储"></a>9. 奖励：秘钥和消息存储</h2><p>不太常见，但可以替换的接口还有<code>ISigningCredentialStore</code>、<code>IValidationKeysStore</code>、<code>IMessageStore</code>和<code>IConsentMessageStore</code>的。</p>
+<p><code>ISigningCredentialStore</code>和<code>IValidationKeys</code>分别处理用于签署令牌的私钥和验证令牌的公钥的加载。默认情况下，密钥从x509证书或证书存储中加载，然后存储在内存中。</p>
+<p><code>IMessageStore</code>和<code>IConsentMessage</code>存储处理IdentityServer协议端点和你的用户界面之间的数据持久性。这些的使用是由IdentityServer交互服务处理的，允许按ID加载错误，并将承诺(consent)响应信息返回给IdentityServer。就个人而言，我从来没有看到过这两个的自定义实现。</p>
+
+  </article>
+  
+  <hr>
+  <blockquote>
+    <p>
+      本文由 <a href="">Xuanye</a> 创作，采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0</a> 国际许可协议。
+    </p>
+    <p>
+      本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。
+    </p>
+  </blockquote>
+  
+</article>
+
+
+<div id="waline"></div>
+
+    </div>
+  </div>
+  <footer>
+  
+  
+  <p id="busuanzi_container_site_pv">
+    本站访问量 <span id="busuanzi_value_site_pv">获取中...</span>
+  </p>
+  
+  <p>
+    Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> | Theme <a target="_blank" rel="noopener" href="https://github.com/syy11cn/hexo-theme-linear">Linear</a> from <a target="_blank" rel="noopener" href="https://syy11.cn">Yiyang Sun</a>
+  </p>
+</footer>
+  
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <script>
+    Waline({
+      el: '#waline',
+      placeholder: '',
+      avatar: 'retro',
+      visitor: true,
+      requiredFields: ['nick', 'mail'],
+      serverURL: 'blog-api-ecru.vercel.app',
+      emoji: [
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ]
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>如何将hexo部署到gitcafe上 | 假正经哥哥</title>
+  <meta name="google-site-verification" content="" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta itemprop="name" content="假正经哥哥" />
+  <meta itemprop="description" content="有心思时干有意义的活，没心情时做有意思的事" />
+  <meta itemprop="image" content="" />
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <!-- keywords and description -->
+  
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  <div id="container">
+    <header>
+  <div class="site-title">
+    <a href="/">
+      假正经哥哥
+    </a>
+  </div>
+  
+  <div class="site-subtitle">
+    有心思时干有意义的活，没心情时做有意思的事
+  </div>
+  
+  
+  <p class="links">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/xuanye/">
+      <img src="/images/links/github.png" alt="xuanye's github">
+    </a>
+    
+  </p>
+  
+</header>
+    <div id="main">
+      <article class="post">
+  <h3 class="date">
+  <time datetime="2013-12-10T14:18:30.000Z">
+    Dec 10, 2013
+  </time>
+</h3>
+  <h1>如何将hexo部署到gitcafe上</h1>
+  <p class="post-info">
+  
+  
+  <a href="/how_to_deploy_pages_on_gitcafe/#waline" class="post-info-item comment-count waline-comment-count" id="/how_to_deploy_pages_on_gitcafe/">获取中...</a>
+  <span class="post-info-item view-count waline-visitor-count" id="/how_to_deploy_pages_on_gitcafe/">获取中...</span>
+  
+</p>
+  
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gitcafe/" rel="tag">gitcafe</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li></ul>
+
+  
+  <article>
+    <h2 id="关于hexo"><a href="#关于hexo" class="headerlink" title="关于hexo"></a>关于hexo</h2><p> <a target="_blank" rel="noopener" href="http://zespia.tw/hexo/zh-CN/" title="hexo">hexo</a> 是基于<a target="_blank" rel="noopener" href="http://nodejs.org/">nodejs</a>的一个博客撰写程序，使用markdown格式撰写博客，并通过hexo生成静态文件，可以发布到任何支持静态文件的空间（比如github等），但是本文不是介绍如何使用hexo或者nodejs的，如果你两者一无所知，我建议你谷歌一下相关内容，再行阅读本文。<a target="_blank" rel="noopener" href="http://zipperary.com/categories/hexo/">这里</a> 有一些比较好的介绍hexo如何使用的文章.</p>
+<h2 id="关于gitcafe"><a href="#关于gitcafe" class="headerlink" title="关于gitcafe"></a>关于gitcafe</h2><p>本文将展示如何将hexo 部署到<a target="_blank" rel="noopener" href="https://gitcafe.com/">gitcafe</a>上，gitcafe 是国内的源代码托管服务商,类似国外的<a target="_blank" rel="noopener" href="https://www.github.com/">github</a>。不过服务器因为在国内，所以访问速度还是比较理想，就是不知道是否能够做大做强，毕竟github摆在眼前。</p>
+<h2 id="进行部署"><a href="#进行部署" class="headerlink" title="进行部署"></a>进行部署</h2><p>首先访问 <a target="_blank" rel="noopener" href="https://gitcafe.com/">https://gitcafe.com/</a> ,注册一个新的账号，过程非常简单，就不描述了，只是别忘了去邮箱确认哦，然后进入到个人主页新建一个项目，项目名称必须和用户名一致。如下图所示：<img src="http://ww1.sinaimg.cn/large/697065c1gw1ebfnyfkwwmj20a604bmx8.jpg" alt="新建一个和用户名一样的项目"></p>
+<p>接着需要配置下ssh,点击账号设置 <img src="http://ww4.sinaimg.cn/large/697065c1gw1ebfo0m2jfej207e08iaa9.jpg" alt="账号设置">，来到ssh管理中添加公钥，如果你不知道如何使用ssh，请参考<a target="_blank" rel="noopener" href="https://gitcafe.com/GitCafe/Help/wiki/%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85%E5%92%8C%E8%AE%BE%E7%BD%AE-Git#wiki" title="添加SSH">这里</a></p>
+<p>如果你是windows git的绿色版的话 ，把git目录下的bin目录和cmd目录添加到<code>path</code>变量中，同时设置下 <code>HOME</code> 变量，可以是当前用户 <code>C:\Users\xuanye</code> 目录</p>
+<p>然后修改hexo的配置文件<code>_config.yaml</code> ,将<code>deploy</code> 配置节修改如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: github</span><br><span class="line">  repository: git@gitcafe.com:xuanye/xuanye.git</span><br><span class="line">  branch: gitcafe-pages</span><br></pre></td></tr></table></figure>
+<p><strong>注意：xuanye修改为你自己的账号，branch必须使用gitcafe-pages 分支</strong></p>
+<p>然后调用 <code>hexo g</code> 重新生成，并调用 <code>hexo deploy</code> 部署即可 （在重新部署前 先删除 <code>.deploy</code> 目录）</p>
+<p>部署成功后，可以通过 http://[username].gitcafe.com/ 进行访问了。</p>
+<p>现在gitcafe还支持绑定自定义域名，在 <code>项目首页&gt;项目管理&gt;自定义域名</code> 添加你的域名,然后到你的DNS服务商那里添加一条A记录 将域名指向GitCafe服务器的IP <code>117.79.146.98</code><br><img src="http://ww1.sinaimg.cn/large/697065c1gw1ebfpyjrqvsj20ia04h74f.jpg" alt="添加域名"> ，等段时间生效后。</p>
+
+  </article>
+  
+  <hr>
+  <blockquote>
+    <p>
+      本文由 <a href="">Xuanye</a> 创作，采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0</a> 国际许可协议。
+    </p>
+    <p>
+      本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。
+    </p>
+  </blockquote>
+  
+</article>
+
+
+<div id="waline"></div>
+
+    </div>
+  </div>
+  <footer>
+  
+  
+  <p id="busuanzi_container_site_pv">
+    本站访问量 <span id="busuanzi_value_site_pv">获取中...</span>
+  </p>
+  
+  <p>
+    Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> | Theme <a target="_blank" rel="noopener" href="https://github.com/syy11cn/hexo-theme-linear">Linear</a> from <a target="_blank" rel="noopener" href="https://syy11.cn">Yiyang Sun</a>
+  </p>
+</footer>
+  
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <script>
+    Waline({
+      el: '#waline',
+      placeholder: '',
+      avatar: 'retro',
+      visitor: true,
+      requiredFields: ['nick', 'mail'],
+      serverURL: 'blog-api-ecru.vercel.app',
+      emoji: [
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ]
+    });
+  </script>
+</body>
+
+</html>
