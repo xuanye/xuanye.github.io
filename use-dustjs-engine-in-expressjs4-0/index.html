@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>在Expressjs4.0中使用dustjs模板引擎 | 假正经哥哥</title>
+  <meta name="google-site-verification" content="" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta itemprop="name" content="假正经哥哥" />
+  <meta itemprop="description" content="有心思时干有意义的活，没心情时做有意思的事" />
+  <meta itemprop="image" content="" />
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <!-- keywords and description -->
+  
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  <div id="container">
+    <header>
+  <div class="site-title">
+    <a href="/">
+      假正经哥哥
+    </a>
+  </div>
+  
+  <div class="site-subtitle">
+    有心思时干有意义的活，没心情时做有意思的事
+  </div>
+  
+  
+  <p class="links">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/xuanye/">
+      <img src="/images/links/github.png" alt="xuanye's github">
+    </a>
+    
+  </p>
+  
+</header>
+    <div id="main">
+      <article class="post">
+  <h3 class="date">
+  <time datetime="2014-10-19T13:03:35.000Z">
+    Oct 19, 2014
+  </time>
+</h3>
+  <h1>在Expressjs4.0中使用dustjs模板引擎</h1>
+  <p class="post-info">
+  
+  
+  <a href="/use-dustjs-engine-in-expressjs4-0/#waline" class="post-info-item comment-count waline-comment-count" id="/use-dustjs-engine-in-expressjs4-0/">获取中...</a>
+  <span class="post-info-item view-count waline-visitor-count" id="/use-dustjs-engine-in-expressjs4-0/">获取中...</span>
+  
+</p>
+  
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dustjs/" rel="tag">Dustjs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ExpressJs/" rel="tag">ExpressJs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nodejs/" rel="tag">Nodejs</a></li></ul>
+
+  
+  <article>
+    <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" rel="noopener" href="http://linkedin.github.io/dustjs/">dustjs</a>是一款js模板,最早由个人开发维护，后来由linkin接手，发展的更加迅速，说实话js模板这块有很多选择，都非常优秀，和paypal的选择一样，最终我使用dustjs作为我的首选模板语言。dustjs中文的文档非常少，所以在国内的使用不是很多，这里几篇博文有对dustjs语法基本的介绍<a target="_blank" rel="noopener" href="http://blog.sprabbit.com/blog/2013/08/16/introduction-dustjs-1/">Dust.js语法简介（一）</a>,<a target="_blank" rel="noopener" href="http://blog.sprabbit.com/blog/2013/08/17/introduction-dustjs-2/">Dust.js语法简介（二）</a>,<a target="_blank" rel="noopener" href="http://blog.sprabbit.com/blog/2013/08/19/introduction-dustjs-3/">Dust.js语法简介（三）</a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;express4.0 默认的模板引擎是jade，jade 刚刚开始用的时候感觉像python，有严格的语法格式，方便程序员养成良好的编码习惯，但是在实际使用下就会发现这种强制，在模板端编写逻辑语言的时候，特别在嵌套判断的时候会有一些无法逾越的问题，同时它的性能问题也一直别人诟病。当然你也可以ejs或者其他模板，这不是我要阐述的重点。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>如果是现成的express项目或者使用express-genarate生成基本结构之后，在<code>package.json</code> 文件的 <code>dependencies</code> 添加三个依赖。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;dustjs-helpers&quot;: &quot;~1.3.0&quot;,</span><br><span class="line">&quot;dustjs-linkedin&quot;: &quot;~2.4.2&quot;,</span><br><span class="line">&quot;adaro&quot;: &quot;^0.1.5&quot;</span><br></pre></td></tr></table></figure>
+<p>其中 <code>dustjs-linkedin</code>是dustjs模板本身，<code>dustjs-helpers</code>是一些模板的扩展方法，在<a target="_blank" rel="noopener" href="https://github.com/linkedin/dustjs/wiki/Dust-Tutorial">dustjs官方的文档</a>中有说明，非常有用，你可以添加自己的helper方法。而<a target="_blank" rel="noopener" href="https://github.com/krakenjs/adaro">adaro</a>是paypal公司提供的dustjs渲染类库，可以使用它方便的在多个模板引擎中切换，paypal的基于express的web框架krakenjs使用的就是adaro作为模板管理的工具。</p>
+<p>然后在app的入口代码处添加模板的使用情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var dustjs = require(&#x27;adaro&#x27;);</span><br><span class="line">var app = express();</span><br><span class="line">// 注册</span><br><span class="line">app.engine(&quot;dust&quot;,dustjs.dust(&#123; cache: false &#125;));</span><br><span class="line">// view engine setup</span><br><span class="line">app.set(&#x27;views&#x27;, path.join(__dirname, &#x27;views&#x27;));</span><br><span class="line">app.set(&#x27;view engine&#x27;, &#x27;dust&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>然后在views目录下使用 添加.dust 后缀的视图文件。<br>如果你编写了自己的helper 那么需要手动在入口文件处 require一下。</p>
+
+  </article>
+  
+  <hr>
+  <blockquote>
+    <p>
+      本文由 <a href="">Xuanye</a> 创作，采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0</a> 国际许可协议。
+    </p>
+    <p>
+      本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。
+    </p>
+  </blockquote>
+  
+</article>
+
+
+<div id="waline"></div>
+
+    </div>
+  </div>
+  <footer>
+  
+  
+  <p id="busuanzi_container_site_pv">
+    本站访问量 <span id="busuanzi_value_site_pv">获取中...</span>
+  </p>
+  
+  <p>
+    Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> | Theme <a target="_blank" rel="noopener" href="https://github.com/syy11cn/hexo-theme-linear">Linear</a> from <a target="_blank" rel="noopener" href="https://syy11.cn">Yiyang Sun</a>
+  </p>
+</footer>
+  
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <script>
+    Waline({
+      el: '#waline',
+      placeholder: '',
+      avatar: 'retro',
+      visitor: true,
+      requiredFields: ['nick', 'mail'],
+      serverURL: 'blog-api-ecru.vercel.app',
+      emoji: [
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ]
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>基于DotNet Core的RPC框架(一) DotBPE.RPC快速开始 | 假正经哥哥</title>
+  <meta name="google-site-verification" content="" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta itemprop="name" content="假正经哥哥" />
+  <meta itemprop="description" content="有心思时干有意义的活，没心情时做有意思的事" />
+  <meta itemprop="image" content="" />
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <!-- keywords and description -->
+  
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  <div id="container">
+    <header>
+  <div class="site-title">
+    <a href="/">
+      假正经哥哥
+    </a>
+  </div>
+  
+  <div class="site-subtitle">
+    有心思时干有意义的活，没心情时做有意思的事
+  </div>
+  
+  
+  <p class="links">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/xuanye/">
+      <img src="/images/links/github.png" alt="xuanye's github">
+    </a>
+    
+  </p>
+  
+</header>
+    <div id="main">
+      <article class="post">
+  <h3 class="date">
+  <time datetime="2017-05-15T12:01:07.000Z">
+    May 15, 2017
+  </time>
+</h3>
+  <h1>基于DotNet Core的RPC框架(一) DotBPE.RPC快速开始</h1>
+  <p class="post-info">
+  
+  
+  <a href="/a-dotnet-core-rpc-sln-dotbpe-quickstart/#waline" class="post-info-item comment-count waline-comment-count" id="/a-dotnet-core-rpc-sln-dotbpe-quickstart/">获取中...</a>
+  <span class="post-info-item view-count waline-visitor-count" id="/a-dotnet-core-rpc-sln-dotbpe-quickstart/">获取中...</span>
+  
+</p>
+  
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dotbpe/" rel="tag">dotbpe</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dotnet/" rel="tag">dotnet</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rpc/" rel="tag">rpc</a></li></ul>
+
+  
+  <article>
+    <h2 id="0x00-简介"><a href="#0x00-简介" class="headerlink" title="0x00 简介"></a>0x00 简介</h2><p>DotBPE.RPC是一款基于dotnet core编写的RPC框架，而它的爸爸DotBPE，目标是实现一个开箱即用的微服务框架，但是它还差点意思，还仅仅在构思和尝试的阶段。但不管怎么说RPC是微服务的基础，先来讲讲RPC的实现吧。DotBPE.RPC底层通信默认实现基于<a target="_blank" rel="noopener" href="https://github.com/Azure/DotNetty">DotNetty</a>，这是由微软Azure团队开发的C#的Netty实现，非常酷。当然你也可以替换成其他Socket通信组件。DotBPE.RPC使用的默认协议名称叫Amp,编解码使用谷歌的Protobuf3,不过这些默认实现都是可以替换的。</p>
+<p>源码地址：<a target="_blank" rel="noopener" href="https://github.com/xuanye/dotbpe.git">https://github.com/xuanye/dotbpe.git</a> </p>
+<span id="more"></span>
+
+<h2 id="0x01-关于Amp协议和Google-Protobuf"><a href="#0x01-关于Amp协议和Google-Protobuf" class="headerlink" title="0x01 关于Amp协议和Google Protobuf"></a>0x01 关于Amp协议和Google Protobuf</h2><h3 id="Amp-A-Message-Protocol"><a href="#Amp-A-Message-Protocol" class="headerlink" title="Amp(A Message Protocol)"></a>Amp(A Message Protocol)</h3><p>Amp(A Message Protocol)  ,中文名叫 <code>一个消息协议</code> ,是DotBPE.RPC默认实现的消息协议，在实际开发中，其实是不需要了解消息是如何编解码和传输的，但是了解协议有助于进一步了解框架。协议基本结构如下图所示:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">      0        1 2 3 4   5 6 7 8     9     10 11     12 13   &lt;length&gt;-14</span><br><span class="line">+------------+----------+---------+------+-------+---------+------------+</span><br><span class="line">| &lt;ver/argc&gt; | &lt;length&gt; |  &lt;seq&gt;  |&lt;type&gt;|&lt;serId&gt;| &lt;msgid&gt; |   &lt;data&gt;   |</span><br><span class="line">+------------+----------+---------+------+-------+---------+------------+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Amp协议默认消息头长为14个字节，不包含扩展包头<br>第0位：ver/argc // 为版本号，暂时来说，默认为0<br>第1-4位: length //为包总长度（含包头长度）<br>第5-8位: sequence // 为消息序列号，通过该序列号对应 请求&lt;—&gt;响应<br>第9位: type // 消息类型，现值有5种，如下:</p>
+<blockquote>
+<p>Request = 1, Response = 2, Notify = 3,NotFound = 4, ERROR = 5<br>第10-11位: serviceId//消息ID ushort类型<br>第12-13位: msgId//消息ID ushort类型<br>在Amp协议中，serviceId标识一类请求，类似应用中的模块，而msgId标识模块中的具体方法</p>
+</blockquote>
+<p>其后紧跟实际的数据</p>
+<h3 id="Google-Protobuf"><a href="#Google-Protobuf" class="headerlink" title="Google Protobuf"></a>Google Protobuf</h3><p>Google Protocol Buffer( 简称 Protobuf) 是 Google 公司内部的混合语言数据标准，目前已经正在使用的有超过 48,162 种报文格式定义和超过 12,183 个 .proto 文件。他们用于 RPC 系统和持续数据存储系统。</p>
+<p>Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化，或者说序列化。它很适合做数据存储或 RPC 数据交换格式。可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。目前提供了 多种语言的API，包括C++、 C# 、GO、 JAVA、 PYTHON</p>
+<p>我在之前的博客<a href="http://xuanye.github.io/2017/04/23/write-google-protobuf-plugin-with-csharp/">使用CSharp编写Google Protobuf插件</a>中有过介绍如果通过编写插件的方式，来通过定义proto文件，并生成我们需要的代码。  </p>
+<p>在DotBPE.RPC 中，我使用protobuf来作为服务的描述文件，并通过自定义的插件方式来生成服务端和客户端代理类。</p>
+<h2 id="0x02-快速开始"><a href="#0x02-快速开始" class="headerlink" title="0x02 快速开始"></a>0x02 快速开始</h2><h3 id="0-前提"><a href="#0-前提" class="headerlink" title="0. 前提"></a>0. 前提</h3><blockquote>
+<p>因为DotBPE是基于dotnet core开发的，你本地必须已经有了dotnet core开发环境<br>使用github托管代码，所以你必须已经安装了git客户端<br>需要通过protoc生成模板代码，所以你必须已经安装了google protobuf命令行工具</p>
+</blockquote>
+<h3 id="1-下载示例程序"><a href="#1-下载示例程序" class="headerlink" title="1. 下载示例程序"></a>1. 下载示例程序</h3><p>为了能够解释我们的快速开始程序，你需要一份本地能够运行的示例代码。从github上下载我已经写好的示例代码，可以让你快速的搭建程序，免去一些繁琐，但是又必须的步骤。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;$ # Clone the repository to get the example code:    </span><br><span class="line">&gt;$ git clone https://github.com/xuanye/dotbpe-sample.git  </span><br><span class="line">&gt;$ cd dotbpe-sample  </span><br></pre></td></tr></table></figure>
+
+<p>使用VS2017，或者VSCode打开下载好的代码，目录结构如下所示：<br><img src="http://ww1.sinaimg.cn/large/697065c1gy1ffm9r259j1j20bw0dmq3f.jpg" alt="代码结构"></p>
+<p>如果你使用VS2017 可以自动帮你还原，如果使用VSCode的话 ，需要运行<code>dotnet restore</code> 下载依赖，成功后使用<code>dotnet build</code> 编译一下看看结果：看着很完美<br><img src="http://ww1.sinaimg.cn/large/697065c1gy1ffm9ves29zj20qw08jweu.jpg" alt="编译结果"></p>
+<h3 id="2-运行程序"><a href="#2-运行程序" class="headerlink" title="2. 运行程序"></a>2. 运行程序</h3><h4 id="运行Server"><a href="#运行Server" class="headerlink" title="运行Server"></a>运行Server</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;$ cd HelloDotBPE.Server   </span><br><span class="line">&gt;$ dotnet run</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行Client"><a href="#运行Client" class="headerlink" title="运行Client"></a>运行Client</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;$ cd HelloDotBPE.Client   </span><br><span class="line">&gt;$ dotnet run</span><br></pre></td></tr></table></figure>
+
+<p>恭喜！已经使用DotBPE.RPC运行一个Server/Client的应用程序。</p>
+<h3 id="3-来一起看一下代码吧"><a href="#3-来一起看一下代码吧" class="headerlink" title="3. 来一起看一下代码吧"></a>3. 来一起看一下代码吧</h3><h4 id="3-1-服务描述文件proto"><a href="#3-1-服务描述文件proto" class="headerlink" title="3.1 服务描述文件proto"></a>3.1 服务描述文件proto</h4><p>首先是DotBPE.RPC框架中对proto的扩展文件，所有的项目都需要这个文件，关于如何扩展proto，我的这篇<a href="http://xuanye.github.io/2017/04/23/write-google-protobuf-plugin-with-csharp/">博客</a>有比较详细的介绍,这里就不重复说了</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//dotbpe_option.proto 文件</span></span><br><span class="line"></span><br><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>;</span><br><span class="line"><span class="keyword">package</span> dotbpe;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">option</span> csharp_namespace = <span class="string">&quot;DotBPE.ProtoBuf&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;google/protobuf/descriptor.proto&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//扩展服务</span></span><br><span class="line">extend google.protobuf.ServiceOptions &#123;</span><br><span class="line">  <span class="type">int32</span> service_id = <span class="number">51001</span>;</span><br><span class="line">  <span class="type">bool</span> disable_generic_service_client = <span class="number">51003</span>; <span class="comment">//禁止生成客户端代码</span></span><br><span class="line">  <span class="type">bool</span> disable_generic_service_server = <span class="number">51004</span>; <span class="comment">//禁止生成服务端代码</span></span><br><span class="line">&#125;</span><br><span class="line">extend google.protobuf.MethodOptions &#123;</span><br><span class="line">  <span class="type">int32</span> message_id = <span class="number">51002</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extend google.protobuf.FileOptions &#123;</span><br><span class="line">  <span class="type">bool</span> disable_generic_services_client = <span class="number">51003</span>; <span class="comment">//禁止生成客户端代码</span></span><br><span class="line">  <span class="type">bool</span> disable_generic_services_server = <span class="number">51004</span>; <span class="comment">//禁止生成服务端代码</span></span><br><span class="line">  <span class="type">bool</span> generic_markdown_doc = <span class="number">51005</span>; <span class="comment">//是否生成文档 本示例中无用</span></span><br><span class="line">  <span class="type">bool</span> generic_objectfactory = <span class="number">51006</span>; <span class="comment">//是否生成objectfactory 本示例中无用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>下面的服务描述文件 <code>greeter.proto</code> 才是真正的示例的服务描述文件：比较简单，定义一个Greeter Rpc服务，并定义一个Hello的方法</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//greeter.proto</span></span><br><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>;</span><br><span class="line"><span class="keyword">package</span> dotbpe;</span><br><span class="line"></span><br><span class="line"><span class="keyword">option</span> csharp_namespace = <span class="string">&quot;HelloDotBPE.Common&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 引入扩展</span></span><br><span class="line"><span class="keyword">import</span> public <span class="string">&quot;dotbpe_option.proto&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个服务</span></span><br><span class="line"><span class="keyword">service </span><span class="title class_">Greeter</span> &#123;</span><br><span class="line">  <span class="keyword">option</span> (service_id)= <span class="number">100</span> ;<span class="comment">//消息ID，全局必须唯一</span></span><br><span class="line">  <span class="comment">// Sends a greeting</span></span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> Hello (HelloRequest) <span class="keyword">returns</span> (HelloResponse) </span>&#123;</span><br><span class="line">    <span class="keyword">option</span> (message_id)= <span class="number">1</span> ;<span class="comment">//设定消息ID，同一服务内唯一</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The request message containing the user&#x27;s name.</span></span><br><span class="line"><span class="keyword">message </span><span class="title class_">HelloRequest</span> &#123;</span><br><span class="line">  <span class="type">string</span> name = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// The response message containing the greetings</span></span><br><span class="line"><span class="keyword">message </span><span class="title class_">HelloResponse</span> &#123;</span><br><span class="line">  <span class="type">string</span> message = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>通过protoc工具生成模板代码，示例中的代码生成到了 HelloDotBPE.Common_g 目录下，本地可以运行shell命令的同学可以直接到<br>dotbpe-sample\script\generate 目录运行<code>sh generate_hello.sh</code> （windows下一般安装cgywin），不能运行的同学也可以在HelloDotBPE目录下，直接运行命令行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protoc -I=../protos --csharp_out=./HelloDotBPE.Common/_g/ --dotbpe_out=./HelloDotBPE.Common/_g/   ../protos/dotbpe_option.proto ../protos/greeter.proto  --plugin=protoc-gen-dotbpe=../../tool/protoc_plugin/Protobuf.Gen.exe</span><br></pre></td></tr></table></figure>
+
+<p>当然我还是建议大家安装以下cgywin运行环境，可以运行unix上的一些常用命令。同时在部署到正式环境的时候可以公用开发环境的一些脚本。</p>
+<h4 id="3-2-服务端代码"><a href="#3-2-服务端代码" class="headerlink" title="3.2 服务端代码"></a>3.2 服务端代码</h4><p>服务实现：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 服务实现代码</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">GreeterImpl</span> : <span class="title">GreeterBase</span> </span><br><span class="line">&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> Task&lt;HelloResponse&gt; <span class="title">HelloAsync</span>(<span class="params">HelloRequest request</span>)</span></span><br><span class="line">   &#123;</span><br><span class="line">		<span class="comment">// 直接返回Hello Name</span></span><br><span class="line">       <span class="keyword">return</span> Task.FromResult(<span class="keyword">new</span> HelloResponse() &#123; Message = <span class="string">&quot;Hello &quot;</span> + request.Name &#125;);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>服务端启动类</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Startup</span> : <span class="title">IStartup</span></span><br><span class="line">   &#123;</span><br><span class="line">      </span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">IAppBuilder app, IHostingEnvironment env</span>)</span></span><br><span class="line">       &#123;</span><br><span class="line">          </span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> IServiceProvider <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">       &#123;</span><br><span class="line">           services.AddDotBPE(); <span class="comment">// 添加DotBPE.RPC的核心依赖</span></span><br><span class="line">           services.AddServiceActors&lt;AmpMessage&gt;(actors =&gt; &#123;</span><br><span class="line">               actors.Add&lt;GreeterImpl&gt;(); <span class="comment">// 注册服务实现</span></span><br><span class="line">           &#125;);</span><br><span class="line"></span><br><span class="line">           <span class="keyword">return</span> services.BuildServiceProvider();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动服务端</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">class Program</span><br><span class="line"> &#123;</span><br><span class="line">     static void Main(string[] args)</span><br><span class="line">     &#123;</span><br><span class="line">         Console.OutputEncoding = System.Text.Encoding.UTF8;</span><br><span class="line"></span><br><span class="line">         //在控制台输出调试日志</span><br><span class="line">         DotBPE.Rpc.Environment.SetLogger(new DotBPE.Rpc.Logging.ConsoleLogger());</span><br><span class="line"></span><br><span class="line">         var host = new RpcHostBuilder()</span><br><span class="line">             .UseServer(&quot;0.0.0.0:6201&quot;) //绑定本地端口6201</span><br><span class="line">             .UseStartup&lt;Startup&gt;()</span><br><span class="line">             .Build();</span><br><span class="line"></span><br><span class="line">         host.StartAsync().Wait();</span><br><span class="line"></span><br><span class="line">         Console.WriteLine(&quot;Press any key to quit!&quot;);</span><br><span class="line">         Console.ReadKey();</span><br><span class="line"></span><br><span class="line">         host.ShutdownAsync().Wait();</span><br><span class="line"></span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-客户端代码"><a href="#3-3-客户端代码" class="headerlink" title="3.3 客户端代码"></a>3.3 客户端代码</h4><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">   &#123;</span><br><span class="line">       <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">       &#123;</span><br><span class="line">           Console.OutputEncoding = Encoding.UTF8;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">var</span> client = AmpClient.Create(<span class="string">&quot;127.0.0.1:6201&quot;</span>); <span class="comment">//建立链接通道</span></span><br><span class="line">           <span class="keyword">var</span> greeter = <span class="keyword">new</span> GreeterClient(client); <span class="comment">//客户端代理类</span></span><br><span class="line">          </span><br><span class="line">           <span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">           &#123;</span><br><span class="line">               Console.WriteLine(<span class="string">&quot;input your name and press enter:&quot;</span>);</span><br><span class="line">               <span class="built_in">string</span> name = Console.ReadLine();</span><br><span class="line">               <span class="keyword">if</span> (<span class="string">&quot;bye&quot;</span>.Equals(name))</span><br><span class="line">               &#123;</span><br><span class="line">                   <span class="keyword">break</span>;</span><br><span class="line">               &#125;</span><br><span class="line">               <span class="keyword">try</span></span><br><span class="line">               &#123;</span><br><span class="line">                   <span class="keyword">var</span> request = <span class="keyword">new</span> HelloRequest() &#123; Name = name &#125;;</span><br><span class="line">                   <span class="keyword">var</span> result = greeter.HelloAsync(request).Result;                  </span><br><span class="line">                   Console.WriteLine(<span class="string">$&quot;---------------receive form server:<span class="subst">&#123;result.Message&#125;</span>-----------&quot;</span>);</span><br><span class="line">                                   </span><br><span class="line">               &#125;</span><br><span class="line">               <span class="keyword">catch</span> (Exception ex)</span><br><span class="line">               &#123;</span><br><span class="line">                   Console.WriteLine(<span class="string">&quot;发生错误：&quot;</span> + ex.Message);</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">           Console.WriteLine(<span class="string">$&quot;---------------close connection-----------&quot;</span>);</span><br><span class="line">           client.CloseAsync();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x03-下一步"><a href="#0x03-下一步" class="headerlink" title="0x03 下一步"></a>0x03 下一步</h3><p>下一篇 我将详细讲述DotBPE.RPC中的主要类和调用关系，并介绍如何使用DotNetty实现RPC通信。<br>事实上我正在编写一个更加复杂的示例<a target="_blank" rel="noopener" href="https://github.com/xuanye/PiggyMetrics.git">https://github.com/xuanye/PiggyMetrics.git</a>，<br>这原是spring cloud的一个示例程序，我使用DotBPE进行改造，用示例描述DotBPE在真实场景中的应用。包括服务注册和发现，服务间调用，公开HttpApi，监控检查等功能，并通过实践进一步完善DotBPE。初步的功能已经实现，不过还没来的及写文档。该系列的后面将详细描述该系统的实现。</p>
+
+  </article>
+  
+  <hr>
+  <blockquote>
+    <p>
+      本文由 <a href="">Xuanye</a> 创作，采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0</a> 国际许可协议。
+    </p>
+    <p>
+      本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。
+    </p>
+  </blockquote>
+  
+</article>
+
+
+<div id="waline"></div>
+
+    </div>
+  </div>
+  <footer>
+  
+  
+  <p id="busuanzi_container_site_pv">
+    本站访问量 <span id="busuanzi_value_site_pv">获取中...</span>
+  </p>
+  
+  <p>
+    Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> | Theme <a target="_blank" rel="noopener" href="https://github.com/syy11cn/hexo-theme-linear">Linear</a> from <a target="_blank" rel="noopener" href="https://syy11.cn">Yiyang Sun</a>
+  </p>
+</footer>
+  
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <script>
+    Waline({
+      el: '#waline',
+      placeholder: '',
+      avatar: 'retro',
+      visitor: true,
+      requiredFields: ['nick', 'mail'],
+      serverURL: 'blog-api-ecru.vercel.app',
+      emoji: [
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ]
+    });
+  </script>
+</body>
+
+</html>

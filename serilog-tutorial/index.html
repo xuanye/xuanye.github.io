@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>(译) Serilog Tutorial | 假正经哥哥</title>
+  <meta name="google-site-verification" content="" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta itemprop="name" content="假正经哥哥" />
+  <meta itemprop="description" content="有心思时干有意义的活，没心情时做有意思的事" />
+  <meta itemprop="image" content="" />
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <!-- keywords and description -->
+  
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  <div id="container">
+    <header>
+  <div class="site-title">
+    <a href="/">
+      假正经哥哥
+    </a>
+  </div>
+  
+  <div class="site-subtitle">
+    有心思时干有意义的活，没心情时做有意思的事
+  </div>
+  
+  
+  <p class="links">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/xuanye/">
+      <img src="/images/links/github.png" alt="xuanye's github">
+    </a>
+    
+  </p>
+  
+</header>
+    <div id="main">
+      <article class="post">
+  <h3 class="date">
+  <time datetime="2018-02-26T05:19:11.000Z">
+    Feb 26, 2018
+  </time>
+</h3>
+  <h1>(译) Serilog Tutorial</h1>
+  <p class="post-info">
+  
+  
+  <a href="/serilog-tutorial/#waline" class="post-info-item comment-count waline-comment-count" id="/serilog-tutorial/">获取中...</a>
+  <span class="post-info-item view-count waline-visitor-count" id="/serilog-tutorial/">获取中...</span>
+  
+</p>
+  
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dotnet/" rel="tag">dotnet</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/serilog/" rel="tag">serilog</a></li></ul>
+
+  
+  <article>
+    <p>在过去的几年中，结构化日志已经大受欢迎。而Serilog是 .NET 中最著名的结构化日志类库 ,我们提供了这份的精简指南来帮助你快速了解并运用它。</p>
+<h2 id="0-内容"><a href="#0-内容" class="headerlink" title="0. 内容"></a>0. 内容</h2><ol>
+<li>设定目标</li>
+<li>认识Serilog</li>
+<li>事件和级别</li>
+<li>触发和收集结构化数据</li>
+<li>为过滤和关联添加事件标记</li>
+<li>大海捞针 [Finding needles in the haystack]</li>
+<li>下一步是什么？</li>
+<li>获得帮助  </li>
+</ol>
+<h2 id="1-设定目标"><a href="#1-设定目标" class="headerlink" title="1. 设定目标"></a>1. 设定目标</h2><p>你可能之前已经在项目中使用了Serilog，或者你有一个新的项目希望使用Serilog，又或者你只是对结构化日志记录感兴趣: 那就非常好！ 你来对地方了。</p>
+<p>然而，更进一步来说，你的目标可能是：</p>
+<ol>
+<li>希望在用户之前发现代码中的BUG和错误</li>
+<li>为了更快的找到生产环境中的问题</li>
+<li>深入的了解系统运行表现</li>
+</ol>
+<p>Serilog使用json格式来记录应用程序中的事件，方便我们可以快速的查询日志，关键是可以方便地过滤和查询日志，而不用编写正则表达式。</p>
+<p>在本教程中，我们将介绍最关键的几个部分，帮助我们可以在生成环境中提供令人惊叹的诊断能力。[注：原文这句挺拗口]</p>
+<span id="more"></span>
+
+<h2 id="2-认识-Serilog"><a href="#2-认识-Serilog" class="headerlink" title="2. 认识 Serilog"></a>2. 认识 Serilog</h2><p>那就让我们开始吧！为了更好的理解，你可以先创建一个新的.Net console 项目，可以是netcore或者传统的NETFramework版本。</p>
+<p>Serilog 通过NuGet分发，项目包括一个Seirlog核心项目<em>Seirlog</em>和很多接收器<em>sinks</em>(超过100个)，这些接收是通过插件的方式来实现将日志写入到各种终端，文件,邮件,数据库或日志服务器</p>
+<p>我们将通过使用<em>Serilog</em>和<em>Serilog.Sinks.Console</em>这两个组件开始，在稍后讨论其他选项：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dotnet add package Serilog</span><br><span class="line">dotnet add package Serilog.Sinks.Console</span><br></pre></td></tr></table></figure>
+
+<p>这是世界上最简单的<em>Serilog</em>配置：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> Serilog;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">Program</span>  </span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">using</span> (<span class="keyword">var</span> log = <span class="keyword">new</span> LoggerConfiguration()</span><br><span class="line">            .WriteTo.Console()</span><br><span class="line">            .CreateLogger())</span><br><span class="line">        &#123;</span><br><span class="line">            log.Information(<span class="string">&quot;Hello, Serilog!&quot;</span>);</span><br><span class="line">            log.Warning(<span class="string">&quot;Goodbye, Serilog.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>让我们稍微分解一下:</p>
+<ul>
+<li><code>LoggerConfiguration</code> 类提供一个流式接口用于构建一个日志记录管道 </li>
+<li><code> WriteTo.Console（)</code> 将控制台接收器添加到上述管道中</li>
+<li><code>CreateLogger（）</code> 组装并返回一个实现<code>ILogger</code>接口的<code>Logger</code>对象</li>
+<li>上述Logger对象同样实现了IDisposable，所以我们可以在<code>using</code>中调用它</li>
+<li>最后<code>log.Information（）</code>和<code>log.Warning（）</code> 触发记录日志</li>
+</ul>
+<p>这个日志记录管道是一个可释放的[disposable],这可能会让你有点意外，但是请记住，记录器通常是要写入文件，数据库等等： 很多<em>sinks</em> 必须被完全地关闭掉。尽管这样，也仅仅在应用程序退出前，根logger才需要被释放。而在应用程序中使用logger是不需要关心这些细节的。 </p>
+<p>你运行了这个程序嘛？这是你看到的效果吧？<br><img src="http://ww1.sinaimg.cn/large/697065c1gy1fottdd5d6nj20sf0dht8r.jpg"></p>
+<p> Apart from just passing it around everywhere, there are two possibilities. [ 除了在各地传递外，还有两种可能性。] If you’re using an IoC container, you might have components receive an ILogger through dependency injection. [ 如果您使用的是IoC容器，则可能会让组件通过依赖注入来接收ILogger。] Packages like AutofacSerilogIntegration can help with that. [ 像AutofacSerilogIntegration这样的软件包可以提供帮助。]</p>
+<p>现在最直接的问题是：我们在应用程序的其他类里面如何获得这个<code>log</code>对象,除了到处传递之外，还有两个办法。</p>
+<ol>
+<li>如果你使用IoC容器，你可以组件注入一个ILogger对象来接收，像<code>AutofacSerilogIntegration</code>的包括帮助你实现这种方式。</li>
+<li>或者，您可以将Logger对象存储在众所周知的位置; Serilog 已经内容内置了一个静态的Log对象，就像这样：</li>
+</ol>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Log.Logger = <span class="keyword">new</span> LoggerConfiguration()  </span><br><span class="line">    .WriteTo.Console()</span><br><span class="line">    .CreateLogger();</span><br><span class="line"></span><br><span class="line">Log.Information(<span class="string">&quot;Hello again, Serilog!&quot;</span>);</span><br><span class="line"></span><br><span class="line">Log.CloseAndFlush();  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>Log</code>类提供所有与<code>ILogger</code>接口相同的方法,这里我们显示调用<code>Log.CloseAndFlush（）</code>来关闭它，而不是使用<code>using</code>代码块</p>
+<p>你可以使用依赖注入的方式，也可以是静态属性的方式 - 这取决你的个人喜好问题。为了简单起见，我们在本教程中使用了静态Log的方式。</p>
+<blockquote>
+<p>也许，你不是在编写一个控制台应用程序。我们将使用Console应用作为广为人知的示例，但是你一旦完成了本教程，您应该查看目标平台的文档（例如，<a target="_blank" rel="noopener" href="https://nblumhardt.com/2017/08/use-serilog/" title="Leaner, meaner ASP.NET Core 2 logging">ASP.NET Core</a>）。</p>
+</blockquote>
+<h2 id="3-Event-and-Level-时间和级别"><a href="#3-Event-and-Level-时间和级别" class="headerlink" title="3. Event and Level [时间和级别]"></a>3. Event and Level [时间和级别]</h2><p>和一些老的日志类库相比（如log4net），在使用Serilog时，你需要做的就是最大改变就是思考日志<em>事件</em>[log <em>events</em>]，而不是日志<em>消息</em>[log <em>message</em>]，一条事件[event]由以下几个内容组成:</p>
+<ul>
+<li>事件发生时的<strong>时间戳</strong>[<strong>timestamp</strong>]</li>
+<li>描述何时应该捕获事件的<strong>级别</strong>[<strong>level</strong>]</li>
+<li>记录事件的消息[<strong>message</strong>]内容]</li>
+<li>描述事件的命名<strong>属性</strong>[<strong>properties</strong>]</li>
+<li>还可能有一个<strong>Exception</strong>对象</li>
+</ul>
+<p>您可以将日志事件格式化为控制台的可读文本，正如我们在第一个示例中看到的那样：</p>
+<pre><code>11:33:01 [INF] Hello, Serilog!  
+</code></pre>
+<p> 或者，您可以将相同的事件格式化为JSON并将其发送到远程日志服务器：</p>
+ <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;@t&quot;</span><span class="punctuation">:</span><span class="string">&quot;2017-11-20T11:33:01.22138&quot;</span><span class="punctuation">,</span><span class="attr">&quot;@m&quot;</span><span class="punctuation">:</span><span class="string">&quot;Hello, Serilog!&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p> 在背后，应用程序中的日志语句会创建<code>LogEvent</code>对象，而连接到管道的接收器[<em>sinks</em>]会知道如何记录它们。</p>
+<h3 id="Logging-levels"><a href="#Logging-levels" class="headerlink" title="Logging levels"></a>Logging levels</h3><p> Serilog速度很快，但始终构建和记录详细的日志事件会浪费CPU，磁盘和网络资源。为了管理这个，Serilog事件被赋予了多种级别：<code>Debug</code>, <code>Information</code>, <code>Warning</code> 和 <code>Error</code>等。对应的有一个<code>Log.*()</code>方法来对应各个级别。</p>
+<p> 在开发过程中，可能会打开调试级别的事件：</p>
+ <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> Log.Logger = <span class="keyword">new</span> LoggerConfiguration()  </span><br><span class="line">    .MinimumLevel.Debug() <span class="comment">// &lt;- Set the minimum level</span></span><br><span class="line">    .WriteTo.Console()</span><br><span class="line">    .CreateLogger();</span><br><span class="line"></span><br><span class="line"><span class="comment">// In a tight loop...</span></span><br><span class="line">Log.Debug(<span class="string">&quot;Processing item &#123;ItemNumber&#125; of &#123;ItemCount&#125;&quot;</span>, itemNumber, itemCount);  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在生成环境中，通常关闭调试的日志，并将最小的日志级别设置成<code>Information</code>,以便只记录重要的事件，在<a target="_blank" rel="noopener" href="https://github.com/serilog/serilog/wiki/Writing-Log-Events#log-event-levels">这篇文档</a>中可以获得有关Serilog Logger Lever的更多信息</p>
+<p>Tip: Serilog has special handling for Exception objects; methods like Log.Error() take the exception as the first parameter, e.g. [ 提示：Serilog对Exception对象有特殊的处理;]  Log.Error(ex, “Task {TaskName} was canceled”, task). [ Log.Error（例如，“任务{任务名称}被取消”，任务）。] Don’t include exceptions in the log message itself. [ 不要在日志消息本身中包含异常。]<br><strong>提示</strong>:Serilog对Exception对象有特殊的处理; 像方法<code>Log.Error()</code> 将 <em>exception</em> 作为第一个参数，例如<code>Log.Error(ex, &quot;Task &#123;TaskName&#125; was canceled&quot;, task)</code>，不要将异常的包括在message消息中</p>
+<h2 id="4-触发和收集结构化数据"><a href="#4-触发和收集结构化数据" class="headerlink" title="4. 触发和收集结构化数据"></a>4. 触发和收集结构化数据</h2><p>让我们回到最后一个代码片段：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> itemNumber = <span class="number">10</span>;  </span><br><span class="line"><span class="keyword">var</span> itemCount = <span class="number">999</span>;  </span><br><span class="line">Log.Debug(<span class="string">&quot;Processing item &#123;ItemNumber&#125; of &#123;ItemCount&#125;&quot;</span>, itemNumber, itemCount);  </span><br></pre></td></tr></table></figure>
+
+<p>您是否注意到日志消息中的<code>&#123;ItemNumber&#125;</code>这样的占位符？ 这不是一个C#的内插字符串[<em>Interpolated string</em> C# 6.0的新特性],<code>Log.*()</code>方法接收一个<a target="_blank" rel="noopener" href="https://messagetemplates.org/">消息模板</a>,另外一种.NET格式化字符串，除了支持传统的<code>&#123;0&#125;</code>的方式，还支持<code>&#123;Name&#125;</code>的方式。</p>
+<p>这看起来有点奇怪，除非您意识到通过这样做，Serilog可以将这些消息的一部分作为类的属性与人性化的文本一起捕获：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;@t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2017-11-20T11:33:01.22138&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@l&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debug&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@m&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Processing item 10 of 999&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;ItemNumber&quot;</span><span class="punctuation">:</span> <span class="number">10</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;ItemCount&quot;</span><span class="punctuation">:</span> <span class="number">999</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p> 我们为什么要这样做？因为通过这种有趣的字段插入方式，并作为属性记录到事件日志中，我们可以立即使用优雅的简单的过滤器来查找事件，就像<code>ItemNumber &gt; 900 </code>,而无需通过正则表达式从消息中提取了。</p>
+<p> 进一步，我们可以使用 <code>@</code> 结构捕获运算符 来获取不仅仅是平坦的属性值，而是完整的对象：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> user = <span class="keyword">new</span> &#123; Name = <span class="string">&quot;Nick&quot;</span>, Id = <span class="string">&quot;nblumhardt&quot;</span> &#125;;  </span><br><span class="line">Log.Information(<span class="string">&quot;Logged on user &#123;@User&#125;&quot;</span>, user);  </span><br></pre></td></tr></table></figure>
+<p> 在这里，<code>user</code>对象被捕获，并生成的JSON中，以便我们可以使用查询来查找事件,如:<code>User.Id = &#39;nblumhardt&#39;</code></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;@t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2017-11-20T11:33:01.22138&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@m&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Logged on user &#123;\&quot;Name\&quot;: \&quot;Nick\&quot;, \&quot;Id\&quot;: \&quot;nblumhardt\&quot;&#125;&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;User&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;Name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Nick&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;Id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;nblumhardt&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>生产环境的监控和调试已经非常困难和耗时，而且经常是压力山大的任务：而通过将相关的数据放在手边，Serilog除去了运维操作相关活动的最大难题之一。</p>
+<p><strong>Tip</strong>: 从Visual Studio Marketplace安装令人惊叹的<a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=Suchiman.SerilogAnalyzer">Serilog Analyzer</a>，可以帮助你检查你的消息模板类型（ 注：这个插件还能帮你通过配置代码生成appsetting.json的内容，但是只支持生成一级配置:( ）</p>
+<p>这实际上有多大的差异取决于你如何收集Serilog的事件。一般来说，日志事件进入文本文件并用<code>grep</code>进行搜索。Serilog也可以记录文本文件，但不能在记事本中执行<code>ItemNumber&gt; 900</code>，因此您需要评估更强大的工具来执行此操作。</p>
+<h3 id="写-JSON-格式的日志文件"><a href="#写-JSON-格式的日志文件" class="headerlink" title="写 JSON 格式的日志文件"></a>写 JSON 格式的日志文件</h3><p>如果您的需求很简单，您可以将JSON写入日志文件，并使用支持JSON的工具直接查询文件。] [ Serilog的文件接收器[<em>sink</em>]和紧凑的JSON格式化类库[compact JSON formatter]使第一部分变得简单。 让我们重新建一个控制台应用程序，并安装下列软件包：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dotnet add package Serilog</span><br><span class="line">dotnet add package Serilog.Sinks.File  </span><br><span class="line">dotnet add package Serilog.Formatting.Compact  </span><br></pre></td></tr></table></figure>
+
+<p>在<code>Main</code>函数中插入:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Log.Logger = <span class="keyword">new</span> LoggerConfiguration()  </span><br><span class="line">    .MinimumLevel.Debug()</span><br><span class="line">    .WriteTo.File(<span class="keyword">new</span> CompactJsonFormatter(), <span class="string">&quot;log.clef&quot;</span>)</span><br><span class="line">    .CreateLogger();</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> itemCount = <span class="number">99</span>;  </span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> itemNumber = <span class="number">0</span>; itemNumber &lt; itemCount; ++itemNumber)  </span><br><span class="line">    Log.Debug(<span class="string">&quot;Processing item &#123;ItemNumber&#125; of &#123;ItemCount&#125;&quot;</span>, itemNumber, itemCount);</span><br><span class="line"></span><br><span class="line">Log.CloseAndFlush();  </span><br></pre></td></tr></table></figure>
+
+<p>运行这个程序将产生使用Serilog的紧凑格式[compact]，在文件log.clef中生成以<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/JSON_streaming" title="newline-delimited JSON stream">换行符分隔的<code>JSON</code>流</a>,如果没有使用<code>CompactJsonFormatter</code>，则会创建一个简单饿扁平日志文件。</p>
+<p>如果你在文本编辑器中打开文件，你会看到JSON事件，就像我们上面使用的例子。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/datalust/clef-tool">CLEF-tool</a> 是查询CLEF格式的日志文件的方便的命令行应用程序：(注:貌似只支持windows)</p>
+<p><img src="http://ww1.sinaimg.cn/large/697065c1gy1fotvarg5n7j20xe0dzdgb.jpg"></p>
+<p>注意第二行的过滤器<code>ItemNumber&gt; 95</code>：毫不费力地在大型日志流中定位事件,就是结构化日志记录的好处吧。</p>
+<h3 id="将日志写入日志服务器"><a href="#将日志写入日志服务器" class="headerlink" title="将日志写入日志服务器"></a>将日志写入日志服务器</h3><p>将日志事件从多个应用程序发送到中央服务器或日志聚合服务非常方便,而不是试图在生产环境中多个日志进行浑水摸鱼[shuffle log files]</p>
+<p>日志服务器通常通过HTTP/S或UDP在网络上接收事件，并为开发人员和操作员工程师提供用户界面，以便在出现问题时搜索和分析日志流。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/serilog/serilog/wiki/Provided-Sinks">Serilog接收器</a>[sinks]支持大量的日志服务器，其中许多具有结构化数据支持。</p>
+<p>注：这段是广告就不翻译了，读者可以根据实际需求选择自己的日志服务器。</p>
+<h2 id="5-为过滤和关联标记事件"><a href="#5-为过滤和关联标记事件" class="headerlink" title="5.  为过滤和关联标记事件"></a>5.  为过滤和关联标记事件</h2><p>我们刚刚看到消息模板如何实现我们传统上认为可以有效搜索和分析的日志“消息”。</p>
+<p>结构化日志记录的另一方面是通过某种因果关系或空间关联来识别相关事件集合。事件触发:[Events raised: ]</p>
+<ul>
+<li>在处理单个HTTP请求期间</li>
+<li>从特定的机器，应用程序，服务或组件</li>
+<li>关于单个客户，订单或交易</li>
+<li>起因于事件的因果链</li>
+</ul>
+<p>Serilog通过<em>enrichment</em>来处理所有这些情况（以及其他情况）。<em>Enrichment</em>只是为事件添加附加属性，而不是源自消息模板的属性</p>
+<h3 id="添加-Enriching-特定的属性"><a href="#添加-Enriching-特定的属性" class="headerlink" title="添加[Enriching]特定的属性"></a>添加[Enriching]特定的属性</h3><p>最简单的enrichment方法将固定属性值添加到源自日志记录管道的所有事件，可以通过<code>Enrich.WithProperty()</code>方法快速实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Log.Logger = new LoggerConfiguration()  </span><br><span class="line">    .Enrich.WithProperty(&quot;Application&quot;, &quot;Demo&quot;)</span><br><span class="line">    .WriteTo.Seq(&quot;http://localhost:5341&quot;) //Seq 日志服务器</span><br><span class="line">    .CreateLogger();</span><br></pre></td></tr></table></figure>
+
+<p> 在<code>LogEvents</code>上，通过<em>enrichment</em>添加的属性看起来与源自消息模板的属性相同</p>
+ <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;@t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2017-11-20T11:33:01.22138&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@l&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Debug&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@m&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Processing item 10 of 999&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;ItemNumber&quot;</span><span class="punctuation">:</span> <span class="number">10</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;ItemCount&quot;</span><span class="punctuation">:</span> <span class="number">999</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Application&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Demo&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="丰富特殊的属性"><a href="#丰富特殊的属性" class="headerlink" title="丰富特殊的属性"></a>丰富特殊的属性</h3><p>通过创建和使用上下文记录器，可以将属性添加到一个或几个相关事件中，而不是增加具有相同值的所有事件</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> orderLog = Log.ForContext(<span class="string">&quot;OrderId&quot;</span>, order.Id);  </span><br><span class="line">orderLog.Information(<span class="string">&quot;Looking up product codes&quot;</span>);  </span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">orderLog.Information(<span class="string">&quot;Product lookup took &#123;Elapsed&#125; ms&quot;</span>, elapsed.TotalMilliseconds);  </span><br></pre></td></tr></table></figure>
+
+<p>在这里，通过<code>orderLog</code>发出的两个事件都会附加一个<code>OrderId</code>属性。<br><code>Enrichmen</code>是附加的:如果应用程序属性设置在管道级别，则上面的第二个事件将携带<code>Elapsed</code>（来自消息），<code>OrderId</code>（来自上下文记录器）和<code>Application</code>（来自记录管道）。</p>
+<h3 id="丰富消息源类型信息"><a href="#丰富消息源类型信息" class="headerlink" title="丰富消息源类型信息"></a>丰富消息源类型信息</h3><p>记录器特定的<em>enrichment</em>一个特例是关于如何使用创建它们的类标记事件</p>
+<p>在名为<code>HomeController</code>的类中，使用以下命令创建类型特定的记录器：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> ILogger _log = Log.ForContext&lt;HomeController&gt;();  </span><br></pre></td></tr></table></figure>
+
+<p>通过<code>_log</code>发出的事件将携带一个值为<code>MyApp.Controllers.HomeController</code>的<code>SourceContext</code>属性。</p>
+<h3 id="充分利用上下文"><a href="#充分利用上下文" class="headerlink" title="充分利用上下文"></a>充分利用上下文</h3><p>为了丰富工作单元中所有事件[为所有事件添加特定属性],<code>Serilog</code>提供了<code>LogContext</code>,首先需要使用<code>Enrich.FromLogContext()</code>在<code>LoggerConfiguration</code>级别启用：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Log.Logger = <span class="keyword">new</span> LoggerConfiguraition()  </span><br><span class="line">     .Enrich.FromLogContext()</span><br><span class="line">     <span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
+
+<p>LogContext可以被认为是一堆<code>(key,value)</code>键值对;</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> (LogContext.PushProperty(<span class="string">&quot;MessageId&quot;</span>, message.Id))  </span><br><span class="line">&#123;</span><br><span class="line">    Log.Debug(<span class="string">&quot;Dispatching message of type &#123;MessageType&#125;&quot;</span>, message.GetType());</span><br><span class="line">    <span class="keyword">await</span> handler.HandleAsync(message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于LogContext有趣的是没有什么需要对象需要传递。在示例代码中，<code>HandleAsync()</code>以及由它调用的任何其他方法的实现可以直接使用<code>Log</code>和<code>ILogger</code> - MessageId属性将自动T并添加<code>LogEvent</code>中。</p>
+<p><strong>Tip</strong>: <code>LogContext</code>是一个堆栈;推送到堆栈上的属性必须通过释放从PushProperty()返回的对象， – 上述通过手动使用<code>using</code>块的方式</p>
+<h3 id="已经存在的Enricher"><a href="#已经存在的Enricher" class="headerlink" title="已经存在的Enricher"></a>已经存在的Enricher</h3><p>所有<em>enrichment</em> API都是使用<code>Enricher</code>的实现Serilog的<code>ILogEventEnricher</code>接口的对象来实现的。 </p>
+<p>NuGet中为线程细节，机器信息和用户详细信息等内容提供了一些有趣的预先构建的Enricher实现。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/serilog/serilog-enrichers-thread">Serilog.Enrichers.Thread</a> 通过 Enrich.WithThreadId() 来添加线程ID相关的扩展:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Log.Logger = new LoggerConfiguration()  </span><br><span class="line">    .Enrich.WithThreadId()</span><br><span class="line">    // ...</span><br></pre></td></tr></table></figure>
+
+<p>这将为事件附加一个<code>ThreadId</code>属性，以便交错事件可以再次分开。</p>
+<p>我们将在下一节中看到一个简单的例子，说明如何编写和插入自己的应用程序专用的<code>Enricher</code>程序。</p>
+<h2 id="6-大海捞针-Finding-needles-in-the-haystack"><a href="#6-大海捞针-Finding-needles-in-the-haystack" class="headerlink" title="6. 大海捞针 Finding needles in the haystack"></a>6. 大海捞针 Finding needles in the haystack</h2><p>如果我们已经知道如何使用Serilog调用消息模板和enrichment结构化日志的两个支柱，那么第三个支柱就是隐式事件类型的概念。</p>
+<p>结构化日志适合有效处理大量日志数据。关于大型日志流的一个有趣的观察是，真实产生的事件比编写日志语句代码块时要多的多（注:这算什么发现）</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Log.Debug(<span class="string">&quot;Processing item &#123;ItemNumber&#125; of &#123;ItemCount&#125;&quot;</span>, itemNumber, itemCount);  </span><br></pre></td></tr></table></figure>
+
+<p>这意味着,尽管生成了许多独特的消息字符串,如<code>&quot;Processing item 31 of 4159&quot;</code>,但由此日志记录语句生成的每个事件共享相同的消息模板，即<code>&quot;Processing item &#123;ItemNumber&#125; of &#123;ItemCount&#125;&quot;</code></p>
+<p>Serilog及其许多sinks 利用这一事实从根本上改进了查询和过滤日志事件的体验。如果消息模板与事件一起保存，则下面的过滤器可以立即从嘈杂的日志记录语句中排除成千上万的事件，从而更容易看到否则会被淹没的有趣事件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@MessageTemplate &lt;&gt; &#x27;Processing item &#123;ItemNumber&#125; of &#123;ItemCount&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>反转也适用 - 放大事件类型可以从单个日志记录语句中查找所有事件</p>
+<p>如何利用此功能取决于您存储和搜索日志的位置。接下来我们会看看细节。</p>
+<p><strong>Tip</strong>:字符串链接，C#内插字符串，以及其他技术手段来预格式化传递给Serilog的消息内容，会取消此功能。详细请看 <a target="_blank" rel="noopener" href="https://nblumhardt.com/2014/09/how-not-to-parameterize-serilog-events/"> How (not) to parameterize Serilog events </a></p>
+<h3 id="隐式事件类型"><a href="#隐式事件类型" class="headerlink" title="隐式事件类型"></a>隐式事件类型</h3><p>存储，然后过滤罗嗦的消息模板并不总是理想的。 相反，通常从消息模板创建一个数字哈希值，并将其与事件一起存储：<br><img src="http://ww1.sinaimg.cn/large/697065c1gy1fotxujxoo9j21690h0q3j.jpg"></p>
+<h3 id="事件类型-enrichment"><a href="#事件类型-enrichment" class="headerlink" title="事件类型 enrichment"></a>事件类型 enrichment</h3><p>日志文件和本地不支持消息模板的日志服务器仍然可以通过在Serilog管道中明确地<code>enricher</code>事件来接收事件类型。</p>
+<p>为此，自定义<code>enricher</code>程序将<code>EventType</code>属性附加到每个事件</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Install-Package Murmurhash</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">EventTypeEnricher</span> : <span class="title">ILogEventEnricher</span>  </span><br><span class="line">&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Enrich</span>(<span class="params">LogEvent logEvent, ILogEventPropertyFactory propertyFactory</span>)</span></span><br><span class="line">   &#123;</span><br><span class="line">      <span class="keyword">var</span> murmur = MurmurHash.Create32();</span><br><span class="line">      <span class="keyword">var</span> bytes = Encoding.UTF8.GetBytes(logEvent.MessageTemplate.Text);</span><br><span class="line">      <span class="keyword">var</span> hash = murmur.ComputeHash(bytes);</span><br><span class="line">      <span class="keyword">var</span> numericHash = BitConverter.ToUInt32(hash, <span class="number">0</span>);</span><br><span class="line">      <span class="keyword">var</span> eventType = propertyFactory.CreateProperty(<span class="string">&quot;EventType&quot;</span>, numericHash);</span><br><span class="line">      logEvent.AddPropertyIfAbsent(eventType);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当插入管道时，这会使<code>&#123;EventType&#125;</code>属性可用于<code>sinks</code></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Log.Logger = <span class="keyword">new</span> LoggerConfiguration()  </span><br><span class="line">   .Enrich.With&lt;EventTypeEnricher&gt;()</span><br><span class="line">   .WriteTo.Console(outputTemplate:</span><br><span class="line">       <span class="string">&quot;&#123;Timestamp:HH:mm:ss&#125; [&#123;EventType:x8&#125; &#123;Level:u3&#125;] &#123;Message:lj&#125;&#123;NewLine&#125;&#123;Exception&#125;&quot;</span>)</span><br><span class="line">   .CreateLogger();</span><br></pre></td></tr></table></figure>
+
+<p><code>WriteTo.Console()</code>的参数是一个Serilog输出模板，描述了如何将日志事件的属性格式化为文本。 大多数基于文本的sinks（包括<code>Serilog.Sinks.File</code>）都可以接受输出模板来指导格式化。</p>
+<p>[ 输出如下所示：]</p>
+<p><img src="http://ww1.sinaimg.cn/large/697065c1gy1foty29nelmj21eo0b3dg5.jpg"></p>
+<h2 id="7-下一步做什么"><a href="#7-下一步做什么" class="headerlink" title="7. 下一步做什么"></a>7. 下一步做什么</h2><p>Serilog是一个强大的库，拥有广泛的插件和工具生态系统。我们只涉及绝对的基础知识 - 取决于您希望如何使用Serilog以及您使用的框架和平台，还有很多可以发现的地方。</p>
+<p>这里有一些文章和扩展，供你参考：</p>
+<ul>
+<li><strong>Debugging and diagnostics</strong> - if you’re having trouble getting Serilog or a sink to work, check out this page on <a target="_blank" rel="noopener" href="https://github.com/serilog/serilog/wiki/Debugging-and-Diagnostics">the Serilog wiki</a></li>
+<li><strong><code>appsettings.json</code> configuration</strong> - in this article we’ve only shown the C# configuration API; <a target="_blank" rel="noopener" href="https://github.com/serilog/serilog-settings-configuration">Serilog.Settings.Configuration</a> adds support for logger configuration in .NET Core JSON settings</li>
+<li><strong>XML <code>&lt;appSettings&gt;</code> configuration</strong> - <a target="_blank" rel="noopener" href="https://github.com/serilog/serilog-settings-appsettings">Serilog.Settings.AppSettings</a> adds support for reading logger configuration from .NET Framework configuration files</li>
+<li><strong>ASP.NET Core integration</strong> - the <a target="_blank" rel="noopener" href="https://github.com/serilog/serilog-aspnetcore">Serilog.AspNetCore</a> package seamlessly integrates Serilog into ASP.NET Core 2.0 apps to take advantage of the structured log events emitted by the framework</li>
+<li><strong>ASP.NET integration</strong> - check out <a target="_blank" rel="noopener" href="https://github.com/serilog-web/classic">SerilogWeb.Classic</a> for a quick-and-painless way to record unhandled exceptions and request timings from ASP.NET projects</li>
+<li><strong>Smart logging middleware for ASP.NET Core</strong> - improve the quality of request logging in ASP.NET Core with the <a target="_blank" rel="noopener" href="https://blog.getseq.net/smart-logging-middleware-for-asp-net-core/">middleware from this article</a></li>
+<li><strong>Timed operations</strong> - <a target="_blank" rel="noopener" href="https://github.com/nblumhardt/serilog-timings">SerilogTimings</a> is a small wrapper for Serilog that makes it easy to log operation timings</li>
+<li><strong>Autofac-Serilog integration</strong> - use <a target="_blank" rel="noopener" href="https://github.com/nblumhardt/autofac-serilog-integration">AutofacSerilogIntegration</a> to inject Serilog ILoggers through Autofac with type information automatically added</li>
+<li><strong>Code analysis for Serilog</strong> - mentioned earlier, <a target="_blank" rel="noopener" href="https://github.com/suchiman/SerilogAnalyzer">Serilog Analyzer</a> checks message template syntax in Visual Studio as-you-type, and detects many potential Serilog usage issues</li>
+<li><strong>Dynamic filtering</strong> - <a target="_blank" rel="noopener" href="https://github.com/serilog/serilog-filters-expressions">Serilog.Filters.Expressions</a> makes it possible to filter events using a simple domain-specific language</li>
+<li><strong>Async wrapper</strong> - the latency of logging to files or the console can be reduced further using the <a target="_blank" rel="noopener" href="https://github.com/serilog/serilog-sinks-async">Serilog.Sinks.Async</a> package</li>
+<li><strong>Sink READMEs</strong> - most sinks, including <a target="_blank" rel="noopener" href="https://github.com/serilog/serilog-sinks-file">Serilog.Sinks.File</a>, <a target="_blank" rel="noopener" href="https://github.com/serilog/serilog-sinks-console">Serilog.Sinks.Console</a>, <a target="_blank" rel="noopener" href="https://github.com/serilog/serilog-sinks-seq">Serilog.Sinks.Seq</a> and others, have good README documents in their GitHub repositories with detailed instructions for using the sink</li>
+<li><strong>Structured Logging Concepts in .NET series</strong> - this <a target="_blank" rel="noopener" href="https://nblumhardt.com/2016/06/structured-logging-concepts-in-net-series-1/">blog series on structured logging</a> has more detail on much of what we’ve covered in this tutorial</li>
+<li><strong>F# support</strong> - if your application is written in F#, <a target="_blank" rel="noopener" href="https://github.com/destructurama/fsharp">Destructurama.FSharp</a> will let you log F# types seamlessly through Serilog</li>
+<li><strong>JSON.NET support</strong> - <a target="_blank" rel="noopener" href="https://github.com/destructurama/json-net">Destructurama.JsonNet</a> extends Serilog to allow JSON.NET dynamic objects to be logged as structured data</li>
+<li><strong>Exception enricher</strong> - <a target="_blank" rel="noopener" href="https://github.com/RehanSaeed/Serilog.Exceptions">Serilog.Exceptions</a> collects additional exception-type-specific information and attaches it to log events</li>
+<li><strong>Async stack trace unmangling</strong> - <a target="_blank" rel="noopener" href="https://github.com/nblumhardt/serilog-enrichers-demystify">Serilog.Enrichers.Demystify</a> plugs in Ben Adams’ Demystifier to improve the readability of exception stack traces</li>
+</ul>
+<h2 id="8-获得帮助"><a href="#8-获得帮助" class="headerlink" title="8. 获得帮助"></a>8. 获得帮助</h2><p>Serilog有三大优秀的社区支持渠道：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/tagged/serilog">Stack Overflow</a> - 如果您有Seri​​log使用问题，Stack Overflow上的Serilog标签是一个很好的开始; 它被积极监控，并且您将通过留下一个容易找到的答案来帮助其他人解决同一个问题</li>
+<li><a target="_blank" rel="noopener" href="https://gitter.im/serilog/serilog">Gitter Chat</a> - 如果您的问题不符合Stack Overflow格式，或者您只是想完善检查方法，那么Gitter聊天室是与Serilog社区中的其他人联系的快捷方式</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/serilog/serilog/issues">GitHub Issues</a> - 最后，如果你发现了一个bug或者想要对Serilog进行改进，GitHub就是这个地方;  <a target="_blank" rel="noopener" href="https://github.com/serilog">Serilog organization</a> 包括了serilog所有的核心库和问题跟踪。</li>
+</ul>
+<p>Happy logging!</p>
+<p>原文地址<a target="_blank" rel="noopener" href="http://blog.getseq.net/serilog-tutorial/">http://blog.getseq.net/serilog-tutorial/</a></p>
+
+  </article>
+  
+  <hr>
+  <blockquote>
+    <p>
+      本文由 <a href="">Xuanye</a> 创作，采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0</a> 国际许可协议。
+    </p>
+    <p>
+      本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。
+    </p>
+  </blockquote>
+  
+</article>
+
+
+<div id="waline"></div>
+
+    </div>
+  </div>
+  <footer>
+  
+  
+  <p id="busuanzi_container_site_pv">
+    本站访问量 <span id="busuanzi_value_site_pv">获取中...</span>
+  </p>
+  
+  <p>
+    Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> | Theme <a target="_blank" rel="noopener" href="https://github.com/syy11cn/hexo-theme-linear">Linear</a> from <a target="_blank" rel="noopener" href="https://syy11.cn">Yiyang Sun</a>
+  </p>
+</footer>
+  
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <script>
+    Waline({
+      el: '#waline',
+      placeholder: '',
+      avatar: 'retro',
+      visitor: true,
+      requiredFields: ['nick', 'mail'],
+      serverURL: 'blog-api-ecru.vercel.app',
+      emoji: [
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ]
+    });
+  </script>
+</body>
+
+</html>

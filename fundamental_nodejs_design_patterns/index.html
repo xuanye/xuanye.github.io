@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>Node.js 基础设计模式 | 假正经哥哥</title>
+  <meta name="google-site-verification" content="" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta itemprop="name" content="假正经哥哥" />
+  <meta itemprop="description" content="有心思时干有意义的活，没心情时做有意思的事" />
+  <meta itemprop="image" content="" />
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <!-- keywords and description -->
+  
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  <div id="container">
+    <header>
+  <div class="site-title">
+    <a href="/">
+      假正经哥哥
+    </a>
+  </div>
+  
+  <div class="site-subtitle">
+    有心思时干有意义的活，没心情时做有意思的事
+  </div>
+  
+  
+  <p class="links">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/xuanye/">
+      <img src="/images/links/github.png" alt="xuanye's github">
+    </a>
+    
+  </p>
+  
+</header>
+    <div id="main">
+      <article class="post">
+  <h3 class="date">
+  <time datetime="2016-02-13T06:23:00.000Z">
+    Feb 13, 2016
+  </time>
+</h3>
+  <h1>Node.js 基础设计模式</h1>
+  <p class="post-info">
+  
+  
+  <a href="/fundamental_nodejs_design_patterns/#waline" class="post-info-item comment-count waline-comment-count" id="/fundamental_nodejs_design_patterns/">获取中...</a>
+  <span class="post-info-item view-count waline-visitor-count" id="/fundamental_nodejs_design_patterns/">获取中...</span>
+  
+</p>
+  
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nodejs/" rel="tag">Nodejs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+
+  
+  <article>
+    <p>&nbsp;当讨论设计模式的时候你可能会想到 <strong>单例</strong>（singletons）, <strong>观察者</strong>（observers） 或者 <strong>工厂</strong>（factories） <strong>factories</strong>（工厂），这篇文章不是专门去讨论他们，同时也会讨论一些其他常用的设计模式，比如<strong>依赖注入</strong>（dependency injection）和<strong>中间件</strong>（middlewares）</p>
+<h2 id="什么是设计模式？"><a href="#什么是设计模式？" class="headerlink" title="什么是设计模式？"></a>什么是设计模式？</h2><p>设计模式是一种对于常见问题的通用可复用的解决方案。</p>
+<h2 id="单例-Singletons"><a href="#单例-Singletons" class="headerlink" title="单例 Singletons"></a>单例 Singletons</h2><p>单例模式限制一个类的实例数量只能是一个，因为使用<code>require</code>方式，在Node.js中创建单例是相当简单的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//area.js</span></span><br><span class="line"><span class="keyword">var</span> <span class="variable constant_">PI</span> = <span class="title class_">Math</span>.<span class="property">PI</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">circle</span> (<span class="params">radius</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> radius * radius * <span class="variable constant_">PI</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">circle</span> = circle;</span><br></pre></td></tr></table></figure>
+<p>不管我们在程序中调用它多少次，它始终只会存在一个实例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> areaCalc = <span class="built_in">require</span>(<span class="string">&#x27;./area&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(areaCalc.<span class="title function_">circle</span>(<span class="number">5</span>));</span><br></pre></td></tr></table></figure>
+<p>因为 <code>requrie</code> 的行为，单例可能是在 <code>NPM</code> 所有模块中最通用的 Node.js 设计模式了</p>
+<h2 id="观察者-Observers"><a href="#观察者-Observers" class="headerlink" title="观察者 Observers"></a>观察者 Observers</h2><p>一个对象包含一个依赖者/观察者的列表，当状态发生变化的时候自动通知它们。去实现观察者模式，就要使用<code>EventEmitter</code>.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MyFancyObservable.js</span></span><br><span class="line"><span class="keyword">var</span> util = <span class="built_in">require</span>(<span class="string">&#x27;util&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> <span class="title class_">EventEmitter</span> = <span class="built_in">require</span>(<span class="string">&#x27;events&#x27;</span>).<span class="property">EventEmitter</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">MyFancyObservable</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="title class_">EventEmitter</span>.<span class="title function_">call</span>(<span class="variable language_">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">util.<span class="title function_">inherits</span>(<span class="title class_">MyFancyObservable</span>, <span class="title class_">EventEmitter</span>);</span><br></pre></td></tr></table></figure>
+<p>这就是我们刚刚创建的一个观察者对象，为了让它有点用，让我给它加几个方法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">MyFancyObservable</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">hello</span> = <span class="keyword">function</span> (<span class="params">name</span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="title function_">emit</span>(<span class="string">&#x27;hello&#x27;</span>, name);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>很好，现在我们的对象可以触发事件了 – 让我们试试看！</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="title class_">MyFancyObservable</span> = <span class="built_in">require</span>(<span class="string">&#x27;MyFancyObservable&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> observable = <span class="keyword">new</span> <span class="title class_">MyFancyObservable</span>();</span><br><span class="line"></span><br><span class="line">observable.<span class="title function_">on</span>(<span class="string">&#x27;hello&#x27;</span>, <span class="keyword">function</span> (<span class="params">name</span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(name);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">observable.<span class="title function_">hello</span>(<span class="string">&#x27;john&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="工厂-Factories"><a href="#工厂-Factories" class="headerlink" title="工厂 Factories"></a>工厂 Factories</h2><p>工厂模式是一种创建型的模式，用于脱离构造函数而是提供一种通用接口来创建对象。这种模式在创建复杂过程时非常有用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">MyClass</span> (<span class="params">options</span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">options</span> = options;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">create</span>(<span class="params">options</span>) &#123;</span><br><span class="line">  <span class="comment">// modify the options here if you want</span></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">MyClass</span>(options);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">create</span> = create;</span><br></pre></td></tr></table></figure>
+<p>工厂也让测试变得容易多了，你可以通过它来注入模块的依赖。</p>
+<h2 id="依赖注入-Dependency-Injection"><a href="#依赖注入-Dependency-Injection" class="headerlink" title="依赖注入 Dependency Injection"></a>依赖注入 Dependency Injection</h2><p>依赖注入是一种当一个或多个依赖（服务）被注入或者引用传递到另外一个依赖对象中的软件设计模式。</p>
+<p>In this example, we are going to create a UserModel which gets a database dependency.<br>在这个例子中，我们要创建一个获取数据库依赖的<code>UserModel</code>对象</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">userModel</span> (<span class="params">options</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> db;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!options.<span class="property">db</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">&#x27;Options.db is required&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  db = options.<span class="property">db</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">create</span>: <span class="keyword">function</span> (<span class="params">done</span>) &#123;</span><br><span class="line">      db.<span class="title function_">query</span>(<span class="string">&#x27;INSERT ...&#x27;</span>, done);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = userModel;</span><br><span class="line"><span class="title class_">Now</span> we can create an instance <span class="keyword">from</span> it <span class="attr">using</span>:</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> db = <span class="built_in">require</span>(<span class="string">&#x27;./db&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> userModel = <span class="built_in">require</span>(<span class="string">&#x27;User&#x27;</span>)(&#123;</span><br><span class="line">  <span class="attr">db</span>: db</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>它有什么用？它让这次变得非常简单 – 当你在编写你的单元测试的时候，你可以很容易的包装一个数据库实例到你的模型中。</p>
+<h2 id="中间件或管道-Middlewares-pipelines"><a href="#中间件或管道-Middlewares-pipelines" class="headerlink" title="中间件或管道 Middlewares / pipelines"></a>中间件或管道 Middlewares / pipelines</h2><p>中间件是一种强大又简便的模式:一个单元/函数输出的结果是下一个的输入.如果你用过<code>Express</code>或者<code>Koa</code>,那么你应该已经对这个模式比较熟悉了</p>
+<p>我们来看一下<code>Koa</code>是怎么实现它的:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="property">use</span> = <span class="keyword">function</span>(<span class="params">fn</span>)&#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">middleware</span>.<span class="title function_">push</span>(fn);</span><br><span class="line">  <span class="keyword">return</span> <span class="variable language_">this</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>非常基础，当你添加一个中间件的时候它仅仅把它添加到一个中间件数组中，到目前为止都还好，那么当请求这台服务器时又会发生什么呢?</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i = middleware.<span class="property">length</span>;</span><br><span class="line"><span class="keyword">while</span> (i--) &#123;</span><br><span class="line">  next = middleware[i].<span class="title function_">call</span>(<span class="variable language_">this</span>, next);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>没有彩蛋– 你的中间价被一个接着一个的调用.</p>
+<h2 id="流-Streams"><a href="#流-Streams" class="headerlink" title="流 Streams"></a>流 Streams</h2><p>你可以把流（Streams）想象成特殊的管道（pipelines），它们非常适合处理大数据，特别当它们是字节形式，而非对象时</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">process.<span class="property">stdin</span>.<span class="title function_">on</span>(<span class="string">&#x27;readable&#x27;</span>, <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> buf = process.<span class="property">stdin</span>.<span class="title function_">read</span>(<span class="number">3</span>);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">dir</span>(buf);</span><br><span class="line">    process.<span class="property">stdin</span>.<span class="title function_">read</span>(<span class="number">0</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ (echo abc; sleep 1; echo def; sleep 1; echo ghi) | node consume2.js</span><br><span class="line">&lt;Buffer 61 62 63&gt;</span><br><span class="line">&lt;Buffer 0a 64 65&gt;</span><br><span class="line">&lt;Buffer 66 0a 67&gt;</span><br><span class="line">&lt;Buffer 68 69 0a&gt;</span><br></pre></td></tr></table></figure>
+<p>To get a better understanding of streams check out substack’s Stream Handbook.</p>
+<p>延伸阅读</p>
+<p><a target="_blank" rel="noopener" href="https://blog.risingstack.com/node-js-best-practices">Node.js 最佳实践</a>：回调惯例、异步代码模式、错误处理以及工作流技巧。<br><a target="_blank" rel="noopener" href="https://blog.risingstack.com/node-js-best-practices-part-2">Node.js 最佳实践 - Part 2</a>：代码提交预检、JavaScript 代码风格检测器及配置。</p>
+<p>via 原文： <a target="_blank" rel="noopener" href="https://blog.risingstack.com/fundamental-node-js-design-patterns/?utm_source=nodeweekly&amp;utm_medium=email">https://blog.risingstack.com/fundamental-node-js-design-patterns/?utm_source=nodeweekly&amp;utm_medium=email</a></p>
+
+  </article>
+  
+  <hr>
+  <blockquote>
+    <p>
+      本文由 <a href="">Xuanye</a> 创作，采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0</a> 国际许可协议。
+    </p>
+    <p>
+      本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。
+    </p>
+  </blockquote>
+  
+</article>
+
+
+<div id="waline"></div>
+
+    </div>
+  </div>
+  <footer>
+  
+  
+  <p id="busuanzi_container_site_pv">
+    本站访问量 <span id="busuanzi_value_site_pv">获取中...</span>
+  </p>
+  
+  <p>
+    Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> | Theme <a target="_blank" rel="noopener" href="https://github.com/syy11cn/hexo-theme-linear">Linear</a> from <a target="_blank" rel="noopener" href="https://syy11.cn">Yiyang Sun</a>
+  </p>
+</footer>
+  
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <script>
+    Waline({
+      el: '#waline',
+      placeholder: '',
+      avatar: 'retro',
+      visitor: true,
+      requiredFields: ['nick', 'mail'],
+      serverURL: 'blog-api-ecru.vercel.app',
+      emoji: [
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ]
+    });
+  </script>
+</body>
+
+</html>

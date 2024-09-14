@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>ASP.NET Core WebAPI 最佳实践 | 假正经哥哥</title>
+  <meta name="google-site-verification" content="" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta itemprop="name" content="假正经哥哥" />
+  <meta itemprop="description" content="有心思时干有意义的活，没心情时做有意思的事" />
+  <meta itemprop="image" content="" />
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <!-- keywords and description -->
+  
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  <div id="container">
+    <header>
+  <div class="site-title">
+    <a href="/">
+      假正经哥哥
+    </a>
+  </div>
+  
+  <div class="site-subtitle">
+    有心思时干有意义的活，没心情时做有意思的事
+  </div>
+  
+  
+  <p class="links">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/xuanye/">
+      <img src="/images/links/github.png" alt="xuanye's github">
+    </a>
+    
+  </p>
+  
+</header>
+    <div id="main">
+      <article class="post">
+  <h3 class="date">
+  <time datetime="2022-01-05T02:01:07.000Z">
+    Jan 5, 2022
+  </time>
+</h3>
+  <h1>ASP.NET Core WebAPI 最佳实践</h1>
+  <p class="post-info">
+  
+  
+  <a href="/asp-net-core-web-api-best-practices/#waline" class="post-info-item comment-count waline-comment-count" id="/asp-net-core-web-api-best-practices/">获取中...</a>
+  <span class="post-info-item view-count waline-visitor-count" id="/asp-net-core-web-api-best-practices/">获取中...</span>
+  
+</p>
+  
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dotnet/" rel="tag">dotnet</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webapi/" rel="tag">webapi</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" rel="tag">最佳实践</a></li></ul>
+
+  
+  <article>
+    <blockquote>
+<p>该文章翻译自 <a target="_blank" rel="noopener" href="https://code-maze.com/">https://code-maze.com/</a> 的免费电子书 《ASP.NET CORE WEB API BEST PRACTICES》</p>
+</blockquote>
+<h2 id="0x00-INTRODUCTION-简介"><a href="#0x00-INTRODUCTION-简介" class="headerlink" title="0x00 INTRODUCTION 简介"></a>0x00 INTRODUCTION 简介</h2><p>当我们在做一个项目的时候，我们的主要目标是使它按照预期的方式工作，并满足客户的所有要求。</p>
+<p>但是，你是否同意创建一个能工作的项目是不够的吗？难道这个项目不应该是可维护和可读的吗？</p>
+<p>事实证明，我们需要对我们的项目投入更多的关注，以一种更可读和可维护的方式来编写它们。这句话背后的主要原因是，我们可能不是唯一会在该项目上工作的人。一旦我们完成了这个项目，其他的人很可能也会参与这个项目。</p>
+<p><strong>那么，我们应该注意什么呢？</strong></p>
+<p>在本指南中，我们将写下我们认为在开发.NET Core Web API 项目时的最佳做法。我们怎样才能使它变得更好，怎样才能使它更容易维护。</p>
+<p>那么，让我们来看看在处理 ASP.NET Web API 项目时，我们可以应用的一些最佳实践。</p>
+<h2 id="0x01-Startup启动类和服务配置"><a href="#0x01-Startup启动类和服务配置" class="headerlink" title="0x01 Startup启动类和服务配置"></a>0x01 <code>Startup</code>启动类和服务配置</h2><p>在<code>Startup</code>类中，有两个方法：<code>ConfigureServices</code>方法用于注册服务，<code>Configure</code>方法用于将中间件组件添加到应用程序的管道中。</p>
+<p>所以，最好的做法是尽量保持<code>ConfigureServices</code>方法的简洁和可读性。当然，我们需要在该方法中编写代码来注册服务，但我们可以通过使用扩展方法以更可读和可维护的方式来完成。</p>
+<p>例如，让我们看一下注册 CORS 的错误方法。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    services.AddCors(options =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        options.AddPolicy(<span class="string">&quot;CorsPolicy&quot;</span>,</span><br><span class="line">        builder =&gt; builder.AllowAnyOrigin()</span><br><span class="line">        .AllowAnyMethod()</span><br><span class="line">        .AllowAnyHeader());</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>尽管这种方式可以很好地工作，并且可以毫无问题地注册 CORS，但想象一下在注册了几十个服务之后，这个方法的大小。</p>
+<p>这根本就不具有可读性。</p>
+<p>更好的方式是创建一个包括静态方法的扩展类</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">ServiceExtensions</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ConfigureCors</span>(<span class="params"><span class="keyword">this</span> IServiceCollection services</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        services.AddCors(options =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            options.AddPolicy(<span class="string">&quot;CorsPolicy&quot;</span>,</span><br><span class="line">                builder =&gt; builder.AllowAnyOrigin()</span><br><span class="line">                .AllowAnyMethod()</span><br><span class="line">                .AllowAnyHeader());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在<code>IServiceCollection</code>类型上调用这个扩展方法</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    services.ConfigureCors();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>要了解更多关于.NET CORE 项目配置的问题，请点击<a target="_blank" rel="noopener" href="https://code-maze.com/net-core-web-development-part2/">.NET Core Project Configuration</a>。</p>
+<h2 id="0x02-项目结构"><a href="#0x02-项目结构" class="headerlink" title="0x02 项目结构"></a>0x02 项目结构</h2><p>我们应该总是尝试将我们的应用程序分成小的项目。这样我们就能得到最好的项目组织和关注点分离（SoC）。与我们的实体、接口、访问数据库、日志消息或发送电子邮件相关的业务逻辑应该总是在一个单独的.NET 类库项目中。</p>
+<p>我们应用程序中的每个小项目都应该包含许多文件夹来组织业务逻辑。</p>
+<p>这里只是一个简单的例子，说明一个完整的项目应该是什么样子的。</p>
+<p><img src="../uploads/20220105/1.jpg" alt="Project Organization"></p>
+<h2 id="0x03-基于环境的设置"><a href="#0x03-基于环境的设置" class="headerlink" title="0x03 基于环境的设置"></a>0x03 基于环境的设置</h2><p>当我们开发我们的应用程序时，该应用程序是在开发环境中。但是一旦我们发布我们的应用程序，它就会在生产环境中。因此，为每个环境单独配置总是一个好的做法。</p>
+<p>在.NET Core 中，这很容易实现。</p>
+<p>一旦我们创建了项目，我们就会得到<code>appsettings.json</code>文件，当我们展开它时，我们就会看到<code>appsetings.Development.json</code>文件。</p>
+<p><img src="../uploads/20220105/2.jpg"></p>
+<p>这个文件中的所有设置都将被用于开发环境。</p>
+<p>我们应该添加另一个文件<code>appsettings.Production.json</code>，以便在生产环境中使用它。</p>
+<p><img src="../uploads/20220105/3.jpg"></p>
+<p>生产文件将被放置在开发文件的正下方。<br>有了这个设置，我们可以在不同的<code>appsettings</code>文件中存储不同的设置，根据我们的应用程序所处的环境，.NET Core 将为我们提供正确的设置。关于这个话题的更多信息，请查看《<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-6.0&viewFallbackFrom=aspnetcore-2.1">ASP.NET Core 中的多个环境</a>》。</p>
+<h2 id="0x04-数据访问层"><a href="#0x04-数据访问层" class="headerlink" title="0x04 数据访问层"></a>0x04 数据访问层</h2><p>在许多例子和不同的教程中，我们可能看到 DAL 在主项目中实现，并在每个控制器中实例化。这是我们不应该做的。</p>
+<p>当我们使用 DAL 时，我们应该将其创建为一个单独的服务。这在.NET Core 项目中非常重要，因为当我们把 DAL 作为一个独立的服务时，我们可以在 IOC（控制反转）容器中注册它。IOC 是.NET Core 的内置功能，通过将 DAL 注册为 IOC 中的服务，我们可以通过简单的构造函数注入在任何控制器中使用它。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">RepoService</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> IRepository _repository;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RepoService</span>(<span class="params">IRepository repository</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">    	_repository = repository;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>存储库的逻辑也应该始终基于接口和通用。请看这篇文章。<a target="_blank" rel="noopener" href="https://code-maze.com/net-core-web-development-part4/">.Net Core 系列–第四部分</a>，看看我们如何在.NET Core 的项目中实现存储库模式。</p>
+<h2 id="0x05-Controllers-控制器"><a href="#0x05-Controllers-控制器" class="headerlink" title="0x05 Controllers 控制器"></a>0x05 Controllers 控制器</h2><p>控制器应该总是尽可能的干净。我们不应该在里面放置任何业务逻辑。</p>
+<p>因此，我们的控制器应该负责通过构造函数注入来接受服务实例，并组织 HTTP 操作方法（GET, POST, PUT, DELETE, PATCH…）。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">OwnerController</span>: <span class="title">Controller</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> ILoggerManager _logger;</span><br><span class="line">    <span class="keyword">private</span> IRepoService _repoService;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">OwnerController</span>(<span class="params">ILoggerManager logger, IRepoService repoService</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _logger = logger;</span><br><span class="line">        _repoService = repoService;</span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="meta">HttpGet</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">GetAllOwners</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="meta">HttpGet(<span class="string">&quot;&#123;id&#125;&quot;</span>, Name = <span class="string">&quot;OwnerById&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">GetOwnerById</span>(<span class="params">Guid id</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="meta">HttpGet(<span class="string">&quot;&#123;id&#125;/account&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">GetOwnerWithDetails</span>(<span class="params">Guid id</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="meta">HttpPost</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">CreateOwner</span>(<span class="params">[FromBody]Owner owner</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="meta">HttpPut(<span class="string">&quot;&#123;id&#125;&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">UpdateOwner</span>(<span class="params">Guid id, [FromBody]Owner owner</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="meta">HttpDelete(<span class="string">&quot;&#123;id&#125;&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">DeleteOwner</span>(<span class="params">Guid id</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x06-Actions"><a href="#0x06-Actions" class="headerlink" title="0x06 Actions"></a>0x06 Actions</h2><p>我们的<code>Action</code>应该始终是干净和简单的。他们的职责包括处理 HTTP 请求，验证模型，捕捉错误，并返回响应。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">HttpPost</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> IActionResult <span class="title">CreateOwner</span>(<span class="params">[FromBody]Owner owner</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (owner.IsObjectNull())</span><br><span class="line">        &#123;</span><br><span class="line">        	<span class="keyword">return</span> BadRequest(<span class="string">&quot;Owner object is null&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!ModelState.IsValid)</span><br><span class="line">        &#123;</span><br><span class="line">        	<span class="keyword">return</span> BadRequest(<span class="string">&quot;Invalid model object&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//additional code</span></span><br><span class="line">        <span class="keyword">return</span> CreatedAtRoute(<span class="string">&quot;OwnerById&quot;</span>, <span class="keyword">new</span> &#123; id = owner.Id &#125;, owner);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (Exception ex)</span><br><span class="line">    &#123;</span><br><span class="line">        _logger.LogError(<span class="string">$&quot;Something went wrong inside the CreateOwner action: <span class="subst">&#123;ex&#125;</span>&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> StatusCode(<span class="number">500</span>, <span class="string">&quot;Internal server error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在大多数情况下，我们的<code>Action</code>应该将 IActionResult 作为返回类型（有时我们想返回一个特定的类型或 JsonResult…）。这样，我们就可以使用.NET Core 中所有返回结果和状态代码的方法。</p>
+<p>最常用的方法是:</p>
+<ul>
+<li><p><strong>OK</strong> =&gt; 返回 200 状态代码</p>
+</li>
+<li><p><strong>NotFound</strong> =&gt; 返回 404 状态代码</p>
+</li>
+<li><p><strong>BadRequest</strong> =&gt; 返回 400 状态代码</p>
+</li>
+<li><p><strong>NoContent</strong> =&gt; 返回 204 状态代码</p>
+</li>
+<li><p><strong>Created, CreatedAtRoute, CreatedAtAction</strong> =&gt; 返回 201 状态代码</p>
+</li>
+<li><p><strong>Unauthorized</strong> =&gt; 返回 401 状态代码</p>
+</li>
+<li><p><strong>Forbid</strong> =&gt; 返回 403 状态代码</p>
+</li>
+<li><p><strong>StatusCode</strong> =&gt; 返回我们作为输入提供的状态代码</p>
+</li>
+</ul>
+<h2 id="0x07-全局错误拦截"><a href="#0x07-全局错误拦截" class="headerlink" title="0x07 全局错误拦截"></a>0x07 全局错误拦截</h2><p>在上面的例子中，我们的<code>Action</code>有自己的<code>try-catch</code>块。这一点非常重要，因为我们需要在我们的<code>Action</code>方法中处理所有的错误（在其他方式中，这些错误是无法处理的）。许多开发者在他们的<code>Action</code>中使用 try-catch 块，这种方法绝对没有错。但是，我们希望我们的<code>Action</code>是干净和简单的，因此，从我们的<code>Action</code>中移除 try-catch 块，并将它们放在一个集中的地方，是一个更好的方法。</p>
+<p>.NET Core 为我们提供了一种方式，通过使用内置的并可随时使用的中间件，只需一点点代码就可以实现全局的异常处理。我们所要做的就是通过修改在<code>Startup</code>类，在<code>Configure</code>方法添加该中间件。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">IApplicationBuilder app, IHostingEnvironment env</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    app.UseExceptionHandler(config =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        config.Run(<span class="keyword">async</span> context =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            context.Response.StatusCode = (<span class="built_in">int</span>)HttpStatusCode.InternalServerError;</span><br><span class="line">            context.Response.ContentType = <span class="string">&quot;application/json&quot;</span>;</span><br><span class="line">            <span class="keyword">var</span> error = context.Features.Get&lt;IExceptionHandlerFeature&gt;();</span><br><span class="line">            <span class="keyword">if</span> (error != <span class="literal">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> ex = error.Error;</span><br><span class="line">                <span class="keyword">await</span> context.Response.WriteAsync(<span class="keyword">new</span> ErrorModel()</span><br><span class="line">                &#123;</span><br><span class="line">                    StatusCode = context.Response.StatusCode,</span><br><span class="line">                    ErrorMessage = ex.Message</span><br><span class="line">                &#125;.ToString());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们甚至可以通过创建自定义中间件来编写我们自己的自定义错误处理程序:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CustomExceptionMiddleware</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//constructor and service injection</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task <span class="title">Invoke</span>(<span class="params">HttpContext httpContext</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">        	<span class="keyword">await</span> _next(httpContext);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Exception ex)</span><br><span class="line">        &#123;</span><br><span class="line">            _logger.LogError(<span class="string">&quot;Unhandled exception ...&quot;</span>, ex);</span><br><span class="line">            <span class="keyword">await</span> HandleExceptionAsync(httpContext, ex);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们需要把它添加到 Application 管道中</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IApplicationBuilder <span class="title">UseCustomExceptionMiddleware</span>(<span class="params"><span class="keyword">this</span> IApplicationBuilder builder</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> builder.UseMiddleware&lt;CustomExceptionMiddleware&gt;();</span><br><span class="line">&#125;</span><br><span class="line">app.UseCustomExceptionMiddleware();</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x08-使用ACTIONFILTERS移除重复代码"><a href="#0x08-使用ACTIONFILTERS移除重复代码" class="headerlink" title="0x08 使用ACTIONFILTERS移除重复代码"></a>0x08 使用<code>ACTIONFILTERS</code>移除重复代码</h2><p>ASP.NET Core 中的过滤器允许我们在请求管道的特定阶段之前或之后运行一些代码。因此，我们可以用它们来执行我们需要在<code>Action</code>方法中重复的验证动作。</p>
+<p>当我们在动作方法中处理一个 PUT 或 POST 请求时，我们需要验证我们的模型对象，正如我们在本文的动作部分所做的那样。因此，这将导致我们的验证代码的重复，而我们想避免这一点（基本上我们想尽可能地避免任何代码的重复）。</p>
+<p>我们可以通过使用 ActionFilters 来做到这一点。而不是在我们的行动中使用验证代码：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!ModelState.IsValid)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// bad request and logging logic</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以创建我们自己的过滤器</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ModelValidationAttribute</span> : <span class="title">ActionFilterAttribute</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnActionExecuting</span>(<span class="params">ActionExecutingContext context</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!context.ModelState.IsValid)</span><br><span class="line">        &#123;</span><br><span class="line">            context.Result = <span class="keyword">new</span> BadRequestObjectResult(context.ModelState);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>并在 Startup 类的 ConfigureServices 方法中注册它</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">services.AddScoped&lt;ModelValidationAttribute&gt;();</span><br></pre></td></tr></table></figure>
+
+<p>现在，我们可以在我们的<code>Action</code>方法中使用该过滤器。你可以在我们的<a target="_blank" rel="noopener" href="https://code-maze.com/action-filters-aspnetcore/">ActionFilters 文章</a>中阅读更多关于它的内容。</p>
+<h2 id="0x09-使用-DTOs-来返回接口和接收参数"><a href="#0x09-使用-DTOs-来返回接口和接收参数" class="headerlink" title="0x09 使用 DTOs 来返回接口和接收参数"></a>0x09 使用 DTOs 来返回接口和接收参数</h2><p>尽管我们可以使用同一个模型类（与数据库表的映射实体类）来返回结果或接受来自客户端的参数，但这并不是一个好的做法。一个更好的做法是将与数据库通信的实体与与客户端通信的实体分开。是的，答案是使用 DTOs。</p>
+<p>模型类是我们数据库表的完整表示，就像这样，我们用它来从数据库中获取数据。但是一旦数据被获取，我们应该将<a target="_blank" rel="noopener" href="https://code-maze.com/automapper-net-core/">数据映射到 DTO</a>，并将结果返回给客户端。通过这样做，如果由于某种原因我们必须改变数据库，我们将不得不只改变模型类而不改变 DTO，因为客户端可能仍然希望得到相同的结果。你可以在<a target="_blank" rel="noopener" href="https://code-maze.com/net-core-web-development-part5/">.NET Core 系列的第五部分</a>阅读更多关于 DTO 的用法。</p>
+<p>我们不应该只是在 GET 请求中使用 DTOs。我们也应该把它们用于其他动作。例如，如果我们有一个 POST 或 PUT 动作，我们也应该使用 DTOs。要阅读更多关于这个主题的内容，你可以阅读<a target="_blank" rel="noopener" href="https://code-maze.com/net-core-web-development-part6/">.NET Core 系列的第六部分</a>。</p>
+<p>此外，DTOs 还可以防止我们项目中的循环引用问题。</p>
+<h2 id="0x10-路由"><a href="#0x10-路由" class="headerlink" title="0x10 路由"></a>0x10 路由</h2><p>在.NET Core Web API 项目中，我们应该使用 Attribute Routing 而不是 Conventional Routing。这是因为 Attribute Routing 帮助我们将路由参数名称与动作方法中的实际参数相匹配。另一个原因是路由参数的描述。当我们看到名称为 “ownerId “的参数比仅仅是 “id “更容易阅读。</p>
+<p>我们可以在控制器顶部和动作本身的顶部使用<code>[Route]</code>属性。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Route(<span class="string">&quot;api/[controller]&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">OwnerController</span>: <span class="title">Controller</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">Route(<span class="string">&quot;&#123;id&#125;&quot;</span>)</span>]</span><br><span class="line">    [<span class="meta">HttpGet</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">GetOwnerById</span>(<span class="params">Guid id</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还有一种方法可以为 Controller 和 Action 创建路由。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Route(<span class="string">&quot;api/owner&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">OwnerController</span>: <span class="title">Controller</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">HttpGet(<span class="string">&quot;&#123;id&#125;&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">GetOwnerById</span>(<span class="params">Guid id</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于哪种方式更好，有不同的意见，但我们总是推荐第二种方式，这也是我们在项目中一直使用的。</p>
+<p>当我们谈论路由时，我们需要提到路由的命名规则。我们可以为我们的<code>Action</code>使用描述性的名字，但是对于路由/终端，我们应该使用名词而不是动词。</p>
+<p>错误的例子：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Route(<span class="string">&quot;api/owner&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">OwnerController</span> : <span class="title">Controller</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">HttpGet(<span class="string">&quot;getAllOwners&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">GetAllOwners</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="meta">HttpGet(<span class="string">&quot;getOwnerById/&#123;id&#125;&quot;</span></span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">GetOwnerById</span>(<span class="params">Guid id</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正确的例子：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Route(<span class="string">&quot;api/owner&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">OwnerController</span> : <span class="title">Controller</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">HttpGet</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">GetAllOwners</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="meta">HttpGet(<span class="string">&quot;&#123;id&#125;&quot;</span></span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">GetOwnerById</span>(<span class="params">Guid id</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于 Restful 实践的更详细的解释，请查看：<a target="_blank" rel="noopener" href="https://code-maze.com/top-rest-api-best-practices/">顶级 REST API 最佳实践</a>。</p>
+<h2 id="0x11-日志"><a href="#0x11-日志" class="headerlink" title="0x11 日志"></a>0x11 日志</h2><p>如果我们计划将我们的应用程序发布到生产中，我们应该有一个日志机制。在弄清我们的软件在生产中的表现时，日志信息是非常有帮助的。</p>
+<p>.NET Core 通过使用 ILogger 接口有自己的日志实现。通过使用依赖注入方式来实现它是非常容易的。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestController</span>: <span class="title">Controller</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ILogger _logger;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestController</span>(<span class="params">ILogger&lt;TestController&gt; logger</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">    	_logger = logger;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在我们的 Action 中，我们可以通过使用_logger 对象来来记录各种日志级别的日志信息。</p>
+<p>.NET Core 支持与各种日志提供者兼容的日志 API。因此，我们可以使用不同的日志提供者来实现我们项目内的日志逻辑。</p>
+<p>NLog 是一个很好的库，可以用来实现我们的自定义日志逻辑。它是可扩展的，支持结构化的日志，而且非常容易配置。我们可以在控制台窗口、文件、甚至数据库中记录我们的信息。</p>
+<p>要了解更多关于在.NET Core 内使用这个库的信息，请查看：<a target="_blank" rel="noopener" href="https://code-maze.com/net-core-web-development-part3/">.NET Core 系列–用 Nlog 做日志</a>。</p>
+<p>Serilog 也是一个不错的选择。它与.NET Core 内置的日志系统相兼容。</p>
+<h2 id="0x12-分页、搜索、排序"><a href="#0x12-分页、搜索、排序" class="headerlink" title="0x12 分页、搜索、排序"></a>0x12 分页、搜索、排序</h2><p>在查询我们的 API 时，我们不希望返回所有资源的集合。这可能会导致性能问题，而且对于公共或私人 API 来说，它根本没有优化。它可能会严重地影响查询速度，甚至在严重的情况下导致应用程序崩溃。</p>
+<p>所以，实现分页、搜索和排序会让我们的用户轻松找到并浏览返回的结果，同时也会缩小结果的范围，这肯定会加快进程。</p>
+<p>涉及到这三个功能的实现有很多，所以要想了解更多，你可以阅读我们关于<a target="_blank" rel="noopener" href="https://code-maze.com/paging-aspnet-core-webapi/">分页</a>、<a target="_blank" rel="noopener" href="https://code-maze.com/searching-aspnet-core-webapi/">搜索</a>和<a target="_blank" rel="noopener" href="https://code-maze.com/blazor-webassembly-sorting/">排序</a>的文章。</p>
+<h2 id="0x13-APIs-的版本控制"><a href="#0x13-APIs-的版本控制" class="headerlink" title="0x13 APIs 的版本控制"></a>0x13 APIs 的版本控制</h2><p>对我们的 API 的要求可能会随着时间的推移而改变，我们想改变我们的 API 以支持这些要求。但是，在这样做的同时，我们不想让 API 的消费者改变他们的代码，因为对于一些客户来说，旧的版本工作得很好，而对于其他客户来说，新的版本才是首选。为了支持这一点，最好的做法是实现 API 版本化。这将保留旧的功能，并仍然促进新的功能。</p>
+<p>我们可以通过几种不同的方式实现版本控制。</p>
+<ul>
+<li><p>用特性:<code>[ApiVersion(&quot;2.0&quot;)]</code></p>
+</li>
+<li><p>我们可以在请求中提供一个版本作为查询字符串：<a target="_blank" rel="noopener" href="https://some-address/api-version-2.0">https://some-address/api-version-2.0</a></p>
+</li>
+<li><p>通过使用 URL 的版本控制:<code>[Route(&quot;api/&#123;v:apiversion&#125;/some-resource&quot;)]</code> 和请求: <a target="_blank" rel="noopener" href="https://some-address/2.0/resource">https://some-address/2.0/resource</a></p>
+</li>
+<li><p>使用 Http 头的版本控制</p>
+</li>
+<li><p>使用 conventions</p>
+</li>
+</ul>
+<p>我们在《Ultimate ASP.NET Core Web API》一书中非常详细地讨论了这个功能和其他所有的最佳实践。</p>
+<h2 id="0x14-使用异步代码"><a href="#0x14-使用异步代码" class="headerlink" title="0x14 使用异步代码"></a>0x14 使用异步代码</h2><p>通过异步编程，我们避免了性能瓶颈，增强了我们应用程序的响应能力。</p>
+<p>其原因是，我们向服务器发送请求，在等待响应时不会阻塞它。所以，通过向服务器发送一个请求，线程池会委托一个线程来处理这个请求。一旦该线程完成了它的工作，它就会返回线程池，为下一个请求释放自己。在某些时候，应用程序从数据库中获取数据，它需要将这些数据发送给请求者。这时，线程池提供另一个线程来处理这项工作。一旦工作完成，一个线程就要回到线程池中。</p>
+<p>需要理解的一件事是，如果我们向一个服务端发送一个请求，而应用程序需要三秒或更多的时间来处理这个请求，那么我们使用异步代码可能无法更快执行这个请求。它将花费与同步请求相同的时间。但主要的优势是，使用异步代码，线程不会被阻塞三秒或更多的时间，因此它将能够处理其他的请求。这就是我们的解决方案的可扩展性。</p>
+<p>当然，将异步代码用于数据库的获取操作只是一个例子。还有很多其他使用异步代码的案例，可以提高我们应用程序的可扩展性，防止线程池阻塞。</p>
+<p>举例来说，在我们的控制器中使用同步操作的 Action:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">HttpGet</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> IActionResult <span class="title">Get</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> owners = _repository.Owner.GetAllOwners();</span><br><span class="line">    _logger.LogInfo(<span class="string">$&quot;Returned all owners from database.&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> Ok(owners);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以使用下面的异步代码代替</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">HttpGet</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task&lt;IActionResult&gt; <span class="title">Get</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> owners = <span class="keyword">await</span> _repository.Owner.GetAllOwnersAsync();</span><br><span class="line">    _logger.LogInfo(<span class="string">$&quot;Returned all owners from database.&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> Ok(owners);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然，这个例子只是一部分。对于完整的异步例子，你可以阅读我们在<a target="_blank" rel="noopener" href="https://code-maze.com/async-generic-repository-pattern/">ASP.NET Core 中实现异步代码</a>的文章。</p>
+<h2 id="0x15-缓存"><a href="#0x15-缓存" class="headerlink" title="0x15 缓存"></a>0x15 缓存</h2><p>缓存使我们能够提高应用程序的性能。</p>
+<ul>
+<li><p>我们可以使用不同的缓存技术。</p>
+</li>
+<li><p>响应缓存</p>
+</li>
+<li><p>内存中的缓存</p>
+</li>
+<li><p>分布式缓存</p>
+</li>
+<li><p>…</p>
+</li>
+</ul>
+<p>缓存是很有用的，因为从内存中读取数据要比从磁盘中读取数据快得多。它也可以减少数据库的成本。基本上，其主要目的是减少对存储层的访问需求，从而改善数据检索过程。</p>
+<p>不同的缓存技术使用不同的技术来缓存数据。响应缓存减少了对网络服务器的请求数量。它减少了网络服务器为生成响应而执行的工作量。另外，它使用头文件来指定我们要如何缓存响应。内存缓存使用服务器内存来存储缓存的数据。分布式缓存技术使用分布式缓存将数据存储在内存中，用于托管在云或服务器场的应用程序。该缓存在处理请求的服务器之间共享。</p>
+<p>基本上，由开发者决定哪种缓存技术最适合他们正在开发的应用程序。</p>
+<p>你可以在我们的《终极 ASP.NET Core Web API》一书中读到更多关于缓存的内容，以及本文中的所有主题。</p>
+<h2 id="0x16-使用-ReadFormAsync-方法"><a href="#0x16-使用-ReadFormAsync-方法" class="headerlink" title="0x16 使用 ReadFormAsync 方法"></a>0x16 使用 ReadFormAsync 方法</h2><p>有很多情况下，我们需要从表单中读取内容。其中一种情况是当我们用 Web API 项目上传文件时。在这种情况下，我们可以使用<code>Request.Form</code>来从 Body 中获取我们的文件。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> IActionResult <span class="title">Upload</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> file = Request.Form.Files[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">var</span> folderName = Path.Combine(<span class="string">&quot;Resources&quot;</span>, <span class="string">&quot;Images&quot;</span>);</span><br><span class="line">        <span class="keyword">var</span> pathToSave = ...</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">return</span> Ok(<span class="keyword">new</span> &#123; dbPath &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里我们使用<code>Requst.Form.Files</code>来访问请求体中的文件。如果我们不为数百万用户创建一个大型应用，这是一个很好的解决方案。但是如果我们为很多用户创建了一个大型的应用程序，使用这个解决方案，我们最终会出现线程池饥饿的情况。这主要是因为<code>Request.Form</code>是采用同步技术从表单主体中读取数据。</p>
+<p>如果我们想避免这种情况（线程池饿死），我们必须使用 ReadFromAsync 方法的异步方式。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task&lt;IActionResult&gt; <span class="title">Upload</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> formCollection = <span class="keyword">await</span> Request.ReadFormAsync();</span><br><span class="line">        <span class="keyword">var</span> file = formCollection.Files.First();</span><br><span class="line">        <span class="comment">//everything else is the same</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>要看这两种方法的完整例子，你可以阅读我们的用<a target="_blank" rel="noopener" href="https://code-maze.com/upload-files-dot-net-core-angular/">.NET Core Web API 上传文件</a>文章。</p>
+<h2 id="0x17-CryptoHelper-和数据保护"><a href="#0x17-CryptoHelper-和数据保护" class="headerlink" title="0x17 CryptoHelper 和数据保护"></a>0x17 CryptoHelper 和数据保护</h2><p>我们不会谈论我们如何不应该把密码作为纯文本存储在数据库中，以及由于安全原因我们需要对它们进行散列（hash）。这已经超出了本指南的范围。互联网上有各种散列算法，也有许多不同的、伟大的方法来散列（hash）密码。</p>
+<p>如果我们想自己做，我们总是可以使用 IDataProtector 接口，这在现有的项目中是很容易使用和实现的。</p>
+<p>要注册它，我们所要做的就是在 ConfigureServices 方法中使用 AddDataProtection 方法。然后它就可以通过依赖注入的方式被注入。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> IDataProtector _protector;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">EmployeesController</span>(<span class="params"> IDataProtectionProvider provider</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    _protector = provider.</span><br><span class="line">    CreateProtector(<span class="string">&quot;EmployeesApp.EmployeesController&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后，我们可以使用它。<code>_protector.Protect(&quot;要保护的字符串&quot;)</code>。</p>
+<p>你可以在<a target="_blank" rel="noopener" href="https://code-maze.com/data-protection-aspnet-core/">用 IDataProtector 保护数据</a>一文中了解更多信息。</p>
+<p>但如果需要一个为.NET Core 的应用程序提供支持且易于使用的库，<code>CryptoHelper</code>是一个相当不错的库。</p>
+<p>CryptoHelper 是一个独立的密码散列器，用于.NET Core，使用 PBKDF2 实现。密码散列器使用新的数据保护栈。</p>
+<h2 id="0x18-内容协商"><a href="#0x18-内容协商" class="headerlink" title="0x18 内容协商"></a>0x18 内容协商</h2><p>默认情况下，.NET Core Web API 返回一个 JSON 格式的结果。在大多数情况下，这就是我们所需要的。</p>
+<p>但是，如果我们的 Web API 的消费者想要另一种响应格式，例如 XML，怎么办？</p>
+<p>为此，我们需要创建一个服务器配置，以期望的方式格式化我们的响应。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    services.AddMvc(config =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Add XML Content Negotiation</span></span><br><span class="line">        config.RespectBrowserAcceptHeader = <span class="literal">true</span>;</span><br><span class="line">        config.InputFormatters.Add(<span class="keyword">new</span> XmlSerializerInputFormatter());</span><br><span class="line">        config.OutputFormatters.Add(<span class="keyword">new</span> XmlSerializerOutputFormatter());</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有时，客户可能会请求一种我们的 Web API 不支持的格式，那么最好的做法是用状态代码 406 不可接受来回应。这也可以在我们的 ConfigureServices 方法中进行配置。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.ReturnHttpNotAcceptable = <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
+
+<p>我们还可以创建我们自己的自定义格式规则。</p>
+<p>内容协商是一个相当大的话题，所以如果你想了解更多关于它的信息，请查看<a target="_blank" rel="noopener" href="https://code-maze.com/content-negotiation-dotnet-core/">.NETCore 中的内容协商</a>。</p>
+<h2 id="0x19-安全和使用-JWT"><a href="#0x19-安全和使用-JWT" class="headerlink" title="0x19 安全和使用 JWT"></a>0x19 安全和使用 JWT</h2><p>在 Web 开发中，JSON Web Token（JWT）正变得越来越流行。由于.NET Core 的内置支持，实现 JWT 认证非常容易。JWT 是一个开放的标准，它允许我们以安全的方式在客户端和服务器之间以 JSON 对象的方式传输数据。</p>
+<p>我们可以在 ConfigureServices 方法中配置 JWT 认证：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)</span><br><span class="line">    .AddJwtBearer(options =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        options.TokenValidationParameters = <span class="keyword">new</span> TokenValidationParameters</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="comment">//Configuration in here</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了在应用程序中使用它，我们需要在<code>Configure</code>方法中调用这段代码。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.UseAuthentication();</span><br></pre></td></tr></table></figure>
+
+<p>我们也可以将 JWT 用于授权部分，只需在 JWT 配置中加入角色要求。要想更详细地了解.NET Core 中的 JWT 认证和授权，请查看<a target="_blank" rel="noopener" href="https://code-maze.com/authentication-aspnetcore-jwt-1/">JWT 与.NET Core 和 Angular 系列的第一部分</a>和<a target="_blank" rel="noopener" href="https://code-maze.com/authentication-aspnetcore-jwt-2/">第二部分</a>。</p>
+<h3 id="ASP-NET-Core-Identity"><a href="#ASP-NET-Core-Identity" class="headerlink" title="ASP.NET Core Identity"></a>ASP.NET Core Identity</h3><p>此外，如果你想在你的应用程序中使用一些高级安全操作，如密码重置、电子邮件验证、第三方授权等，你可以随时参考<a target="_blank" rel="noopener" href="https://code-maze.com/asp-net-core-identity-series/">ASP.NET Core Identity</a>。</p>
+<p>ASP.NET Core Identity 是 Web 应用程序的会员系统，包括会员、登录和用户数据。它包含了很多功能来帮助我们进行用户管理的过程。在我们的<a target="_blank" rel="noopener" href="https://code-maze.com/asp-net-core-identity-series/">ASP.NET Core Identity 系列</a>中，你可以学到很多关于这些功能以及如何在你的 ASP.NET Core 项目中实现它们。</p>
+<h3 id="使用-IdentityServer4-–-OAuth2-and-OpenID-Connect"><a href="#使用-IdentityServer4-–-OAuth2-and-OpenID-Connect" class="headerlink" title="使用 IdentityServer4 – OAuth2 and OpenID Connect"></a>使用 IdentityServer4 – OAuth2 and OpenID Connect</h3><p><code>IdentityServer4</code>是一个授权服务器，可以被多个客户端用于认证操作。它与用户存储管理无关，但它可以很容易地与<code>ASP.NET Core Identity</code>库集成，为所有客户端应用程序提供强大的安全功能。<code>OAuth2</code>和<code>OpenID Connect</code>是允许我们建立更安全的应用程序的协议。OAuth2 与授权部分更相关，而 OpenID Connect（OIDC）则与身份（认证）部分相关。我们可以使用不同的流程和端点来应用安全，并从授权服务器获取令牌。你可以随时阅读<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc6749">RFC 6749 在线文档</a>来了解更多关于 OAuth2 的信息</p>
+<h2 id="0x20-测试我们的应用"><a href="#0x20-测试我们的应用" class="headerlink" title="0x20 测试我们的应用"></a>0x20 测试我们的应用</h2><p>我们应该尽可能多的为我们的应用程序写测试。我们知道，从我们的经验来看，没有时间总是这样做，但它对于检查我们正在编写的软件的质量非常重要。我们可以在开发阶段发现潜在的错误，并确保我们的应用程序在发布到生产中之前能够按照预期工作。当然，还有许多其他的原因要为我们的应用程序写测试。<br>要了解更多关于 ASP.NET Core 应用程序（Web API、MVC 或任何其他）的测试，你可以阅读我们的<a target="_blank" rel="noopener" href="https://code-maze.com/asp-net-core-testing/">ASP.NET Core 测试系列</a>，在那里我们会详细解释这个过程。</p>
+<h2 id="0x21-总结"><a href="#0x21-总结" class="headerlink" title="0x21 总结"></a>0x21 总结</h2><p>在本指南中，我们的主要目标是让您熟悉在.NET Core 中开发 Web API 项目时的最佳实践。其中一些也可用于其他框架，因此，牢记这些总是有帮助的。</p>
+<p>感谢你阅读本指南，我希望你在其中找到有用的东西。</p>
+<p>如果你想学习如何在真实世界的项目中应用这些实践，请查看我们的<a target="_blank" rel="noopener" href="https://code-maze.com/ultimate-aspnet-core-3-web-api">Ultimate ASP.NET Core 3 Web API</a>项目，它包含了这个免费电子书中所描述的概念、具体例子和实现，以及更多的东西!</p>
+<p>编码愉快!</p>
+
+  </article>
+  
+  <hr>
+  <blockquote>
+    <p>
+      本文由 <a href="">Xuanye</a> 创作，采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0</a> 国际许可协议。
+    </p>
+    <p>
+      本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。
+    </p>
+  </blockquote>
+  
+</article>
+
+
+<div id="waline"></div>
+
+    </div>
+  </div>
+  <footer>
+  
+  
+  <p id="busuanzi_container_site_pv">
+    本站访问量 <span id="busuanzi_value_site_pv">获取中...</span>
+  </p>
+  
+  <p>
+    Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> | Theme <a target="_blank" rel="noopener" href="https://github.com/syy11cn/hexo-theme-linear">Linear</a> from <a target="_blank" rel="noopener" href="https://syy11.cn">Yiyang Sun</a>
+  </p>
+</footer>
+  
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <script>
+    Waline({
+      el: '#waline',
+      placeholder: '',
+      avatar: 'retro',
+      visitor: true,
+      requiredFields: ['nick', 'mail'],
+      serverURL: 'blog-api-ecru.vercel.app',
+      emoji: [
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ]
+    });
+  </script>
+</body>
+
+</html>
