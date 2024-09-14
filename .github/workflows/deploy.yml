@@ -1,54 +1,54 @@
 name: CI
 
 on:
-    push:
-        branches:
-            - source
+  push:
+    branches:
+      - source
 
 env:
-    SOURCE_REPO: xuanye/xuanye.github.io
-    SOURCE_BRANCH: source
-    DEPLOY_REPO: xuanye/xuanye.github.io
-    DEPLOY_BRANCH: master
+  SOURCE_REPO: xuanye/xuanye.github.io
+  SOURCE_BRANCH: source
+  DEPLOY_REPO: xuanye/xuanye.github.io
+  DEPLOY_BRANCH: master
 
 jobs:
-    build:
-        name: Build on node ${{ matrix.node_version }} and ${{ matrix.os }}
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                os: [ubuntu-latest]
-                node_version: [14.x]
+  build:
+    name: Build on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node_version: [14.x]
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-            - name: Use Node.js ${{ matrix.node_version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node_version }}
+      - name: Use Node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node_version }}
 
-            - name: Before Install dependencies
-              run: |
-                  git config --global user.name 'xuanye'
-                  git config --global user.email 'xuanye.wan@gmail.com'
+      - name: Before Install dependencies
+        run: |
+          git config --global user.name 'xuanye'
+          git config --global user.email 'xuanye.wan@gmail.com'
 
-            - name: Install dependencies
-              run: |
-                  npm install
+      - name: Install dependencies
+        run: |
+          npm install
 
-            - name: Configuration environment
-              env:
-                  HEXO_DEPLOY_PRI: ${{secrets.HEXO_DEPLOY_PRI}}
-              run: |
-                  sudo timedatectl set-timezone "Asia/Shanghai"
-                  mkdir -p ~/.ssh/
-                  echo "$HEXO_DEPLOY_PRI" > ~/.ssh/id_rsa
-                  chmod 600 ~/.ssh/id_rsa
-                  ssh-keyscan github.com >> ~/.ssh/known_hosts
-                  git clone git@github.com:syy11cn/hexo-theme-linear.git themes/linear
-                  cp ./_config.linar.yml ./themes/linear/_config.yml
-            - name: Deploy hexo
-              run: |
-                  npm run deploy
+      - name: Configuration environment
+        env:
+          HEXO_DEPLOY_PRI: ${{secrets.HEXO_DEPLOY_PRI}}
+        run: |
+          sudo timedatectl set-timezone "Asia/Shanghai"
+          mkdir -p ~/.ssh/
+          echo "$HEXO_DEPLOY_PRI" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          git clone git@github.com:yysuen/hexo-theme-linear.git themes/linear
+          cp ./_config.linar.yml ./themes/linear/_config.yml
+      - name: Deploy hexo
+        run: |
+          npm run deploy
