@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>使用Peach简化Socket网络通讯协议开发 | 假正经哥哥</title>
+  <meta name="google-site-verification" content="" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta itemprop="name" content="假正经哥哥" />
+  <meta itemprop="description" content="有心思时干有意义的活，没心情时做有意思的事" />
+  <meta itemprop="image" content="" />
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <!-- keywords and description -->
+  
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  <div id="container">
+    <header>
+  <div class="site-title">
+    <a href="/">
+      假正经哥哥
+    </a>
+  </div>
+  
+  <div class="site-subtitle">
+    有心思时干有意义的活，没心情时做有意思的事
+  </div>
+  
+  
+  <p class="links">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/xuanye/">
+      <img src="/images/links/github.png" alt="xuanye's github">
+    </a>
+    
+  </p>
+  
+</header>
+    <div id="main">
+      <article class="post">
+  <h3 class="date">
+  <time datetime="2019-02-27T03:01:07.000Z">
+    Feb 27, 2019
+  </time>
+</h3>
+  <h1>使用Peach简化Socket网络通讯协议开发</h1>
+  <p class="post-info">
+  
+  
+  <a href="/a-lightweight-and-fast-socket-lib-base-on-dotnetty/#waline" class="post-info-item comment-count waline-comment-count" id="/a-lightweight-and-fast-socket-lib-base-on-dotnetty/">获取中...</a>
+  <span class="post-info-item view-count waline-visitor-count" id="/a-lightweight-and-fast-socket-lib-base-on-dotnetty/">获取中...</span>
+  
+</p>
+  
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dotnet/" rel="tag">dotnet</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dotnetty/" rel="tag">dotnetty</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/netty/" rel="tag">netty</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/peach/" rel="tag">peach</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/socket/" rel="tag">socket</a></li></ul>
+
+  
+  <article>
+    <p><img src="http://ww1.sinaimg.cn/large/697065c1ly1g0ky6oxiznj21hc0gohdu.jpg"></p>
+<p>Peach是基于<a target="_blank" rel="noopener" href="https://github.com/Azure/DotNetty">DotNetty</a>的Socket网络通讯帮助类库，可以帮助开发者简化使用DotNetty，关于DotNetty可参考我之前的<a href="http://xuanye.github.io/dotnetty-quickstart/">这篇文章</a>。<br>Peach内置实现了一个基于文本协议的CommandLineProtocol，下面的实例以这个协议展开，最后以<a target="_blank" rel="noopener" href="https://github.com/dotbpe/dotbpe">DotBPE</a>中Amp协议来介绍下如何扩展自定义协议。  </p>
+<p>Github地址: <a target="_blank" rel="noopener" href="https://github.com/xuanye/Peach">https://github.com/xuanye/Peach</a></p>
+<h1 id="QuickStart-使用"><a href="#QuickStart-使用" class="headerlink" title="QuickStart 使用"></a>QuickStart 使用</h1><p>添加引用</p>
+<blockquote>
+<p>dotnet nuget add Peach</p>
+</blockquote>
+<p>要使用Peach编写网络程序，一般只需要三个步骤</p>
+<ol>
+<li>实现协议传输消息IMessage</li>
+<li>实现协议打包和解包逻辑IProtocol</li>
+<li>实现ISocketService完成服务端逻辑编写<span id="more"></span>
+在快速开始的实例中，我们使用内置的CommandLineProtocol，所以省去了步骤1,2让我们开始吧！</li>
+</ol>
+<h2 id="1-服务端"><a href="#1-服务端" class="headerlink" title="1 服务端"></a>1 服务端</h2><h3 id="1-1-实现MyService"><a href="#1-1-实现MyService" class="headerlink" title="1.1 实现MyService"></a>1.1 实现MyService</h3><p>可分别重写  </p>
+<ol>
+<li><code>OnConnected</code> 有客户端连接上的事件  </li>
+<li><code>OnDisConnected</code> 客户端断开连接时的事件</li>
+<li><code>OnReceive</code> 收到客户端消息的事件</li>
+<li><code>OnException</code> 发生异常时的事件，如异常断开</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">public class MyService : Peach.AbsSocketService&lt;Peach.Messaging.CommandLineMessage&gt;</span><br><span class="line">&#123;</span><br><span class="line">    private readonly ILogger&lt;MyService&gt; _logger;</span><br><span class="line"></span><br><span class="line">    public MyService(ILogger&lt;MyService&gt; logger)</span><br><span class="line">    &#123;</span><br><span class="line">        _logger = logger;</span><br><span class="line">    &#125;</span><br><span class="line">    public override void OnConnected(ISocketContext&lt;CommandLineMessage&gt; context)</span><br><span class="line">    &#123;</span><br><span class="line">        _logger.LogInformation(&quot;client connected from &#123;0&#125;&quot;, context.RemoteEndPoint);</span><br><span class="line">        base.OnConnected(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public override void OnDisconnected(ISocketContext&lt;CommandLineMessage&gt; context)</span><br><span class="line">    &#123;</span><br><span class="line">        _logger.LogInformation(&quot;client disconnected from &#123;0&#125;&quot;, context.RemoteEndPoint);</span><br><span class="line">        base.OnDisconnected(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public override void OnException(ISocketContext&lt;CommandLineMessage&gt; context, Exception ex)</span><br><span class="line">    &#123;</span><br><span class="line">        _logger.LogError(ex,&quot;client from &#123;0&#125;, occ error &#123;1&#125;&quot;, context.RemoteEndPoint,ex.Message);</span><br><span class="line">        base.OnException(context, ex);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public override void OnReceive(ISocketContext&lt;CommandLineMessage&gt; context, CommandLineMessage msg)</span><br><span class="line">    &#123;</span><br><span class="line">        string replyMessage = string.Empty;</span><br><span class="line">        string replyCmd = string.Empty;</span><br><span class="line">        switch (msg.Command)</span><br><span class="line">        &#123;</span><br><span class="line">            case &quot;echo&quot;:</span><br><span class="line">                replyMessage = msg.Parameters[0];</span><br><span class="line">                replyCmd = &quot;echo&quot;;</span><br><span class="line">                break;</span><br><span class="line">            case &quot;init&quot;:</span><br><span class="line">                replyMessage = &quot;ok&quot;;</span><br><span class="line">                replyCmd = &quot;init_reply&quot;;</span><br><span class="line"></span><br><span class="line">                break;</span><br><span class="line">            default:</span><br><span class="line">                replyMessage = &quot;error unknow command&quot;;</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        Task.Run(async () =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            await context.SendAsync(new CommandLineMessage(replyCmd, replyMessage));</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-挂载服务"><a href="#2-挂载服务" class="headerlink" title="2. 挂载服务"></a>2. 挂载服务</h3><p>服务默认挂载在5566端口  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">static void Main(string[] args)</span><br><span class="line">&#123;</span><br><span class="line">    var builder = new HostBuilder()          </span><br><span class="line">    .ConfigureServices((context,services) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        //协议</span><br><span class="line">        services.AddSingleton&lt;IProtocol&lt;CommandLineMessage&gt;, CommandLineProtocol&gt;();</span><br><span class="line">        //挂载服务逻辑</span><br><span class="line">        services.AddSingleton&lt;ISocketService&lt;CommandLineMessage&gt;, MyService&gt;();</span><br><span class="line">        //添加挂载的宿主服务</span><br><span class="line">        services.AddTcpServer&lt;CommandLineMessage&gt;();</span><br><span class="line">    &#125;)</span><br><span class="line">    .ConfigureLogging(</span><br><span class="line">        logger =&gt;</span><br><span class="line">        &#123;                   </span><br><span class="line">            logger.AddConsole();</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line">    builder.RunConsoleAsync().Wait();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-客户端"><a href="#2-客户端" class="headerlink" title="2. 客户端"></a>2. 客户端</h2><h3 id="2-1-使用内置的TcpClient"><a href="#2-1-使用内置的TcpClient" class="headerlink" title="2.1 使用内置的TcpClient"></a>2.1 使用内置的TcpClient</h3><p>监听接收消息和链接的消息，如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">TcpClient&lt;CommandLineMessage&gt; client = new TcpClient&lt;CommandLineMessage&gt;(new CommandLineProtocol());</span><br><span class="line">client.OnReceived += Client_OnReceived;</span><br><span class="line">client.OnConnected += Client_OnConnected;</span><br><span class="line"></span><br><span class="line">Task.Run(async () =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    //连接服务器</span><br><span class="line">    var socketContext = await client.ConnectAsync(new IPEndPoint(Hey.IPUtility.GetLocalIntranetIP(), 5566));</span><br><span class="line">    //发送消息</span><br><span class="line">    var initCmd = new Hey.Messaging.CommandLineMessage(&quot;init&quot;);</span><br><span class="line">    await socketContext.SendAsync(initCmd);</span><br><span class="line">&#125;).Wait();</span><br></pre></td></tr></table></figure>
+
+<p>可用的事件:</p>
+<ul>
+<li><code>OnReceived</code> 当收到服务端消息时</li>
+<li><code>OnError</code> 当通讯发生异常时</li>
+<li><code>OnConnected</code> 当连接上服务器时</li>
+<li><code>OnDisconnected</code> 当与服务端断开链接时</li>
+<li><code>OnIdleState</code> 链接闲置时触发，一般在此事件中发送心跳包</li>
+</ul>
+<h2 id="3-自定义协议"><a href="#3-自定义协议" class="headerlink" title="3. 自定义协议"></a>3. 自定义协议</h2><p>Peach支持使用自定义协议，扩展协议需要自行实现两个接口:</p>
+<h3 id="3-1-IMessage-接口"><a href="#3-1-IMessage-接口" class="headerlink" title="3.1. IMessage 接口"></a>3.1. IMessage 接口</h3><p>实现类具体实现通讯消息的内容载体，只需实现如何获取消息长度的属性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public interface IMessage</span><br><span class="line">&#123;</span><br><span class="line">    int Length &#123; get;  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-IProtocol-接口"><a href="#3-2-IProtocol-接口" class="headerlink" title="3.2. IProtocol 接口"></a>3.2. IProtocol 接口</h3><p>实现类需要描述消息头信息和具体打包解包逻辑，头信息描述参见<code>ProtocolMeta</code>字段描述</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/// &lt;summary&gt;</span><br><span class="line">/// 协议接口</span><br><span class="line">/// &lt;/summary&gt;</span><br><span class="line">/// &lt;typeparam name=&quot;TMessage&quot;&gt;&lt;/typeparam&gt;</span><br><span class="line">public interface IProtocol&lt;TMessage&gt;</span><br><span class="line">    where TMessage :  Messaging.IMessage</span><br><span class="line">&#123;</span><br><span class="line">    ProtocolMeta GetProtocolMeta();</span><br><span class="line"></span><br><span class="line">    TMessage Parse(Buffer.IBufferReader reader);</span><br><span class="line"></span><br><span class="line">    void Pack(Buffer.IBufferWriter writer, TMessage message);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-Amp协议"><a href="#3-3-Amp协议" class="headerlink" title="3.3 Amp协议"></a>3.3 Amp协议</h3><p>为了更好让读者理解自定义协议的操作，这里以DotBPE中的Amp协议为例，来具体讲解一下，先来看下Amp协议的说明:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">      0        1 2 3 4   5 6 7 8     9     10 11 12 13   1415      16171819    20    &lt;length&gt;-21</span><br><span class="line">+------------+----------+---------+------+-------------+---------+---------+--------+------------+</span><br><span class="line">| &lt;ver/argc&gt; | &lt;length&gt; |  &lt;seq&gt;  |&lt;type&gt;| &lt;serviceId&gt; | &lt;msgId&gt; |  &lt;code&gt; | &lt;codec&gt;|   &lt;data&gt;   |</span><br><span class="line">+------------+----------+---------+------+-------------+---------+---------+--------+------------+</span><br></pre></td></tr></table></figure>
+<p>Amp协议固定包头上21个字节，说明如下：</p>
+<ul>
+<li>ver/argc = 版本 固定填1</li>
+<li>length = 为总包长</li>
+<li>seq  = 请求序列号</li>
+<li>type = 消息类型<ul>
+<li>1 = Request 请求消息</li>
+<li>2 = Response 响应消息</li>
+<li>3 = Notify 通知消息</li>
+<li>4 = OneWayRequest 调用不关心返回值</li>
+</ul>
+</li>
+<li>serId = serviceId  服务号</li>
+<li>msgId = msgId 消息ID</li>
+<li>code = 当 type = 0 （请求时）固定传0 ，其他即为响应码，如果响应码不为0 则认为请求失败，具体错误码再定义</li>
+<li>codecType = 编码方式 0=默认 Protobuf 1=MessagePack 2=JSON</li>
+<li>data = 实际的业务数据</li>
+</ul>
+<h3 id="3-3-1-AmpMessage实现"><a href="#3-3-1-AmpMessage实现" class="headerlink" title="3.3.1 AmpMessage实现"></a>3.3.1 AmpMessage实现</h3><p>为了避免干扰因素，这里的代码去除了一些，辅助行的字段和方法，AmpMessage其实是主要用于描述头信息的，并且包含body的buffer数据 <code>Data</code>字段，并实现获取消息体Length的方法（用于发送消息时，计算缓冲区）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">public class AmpMessage :  Peach.Messaging.IMessage</span><br><span class="line">   &#123;</span><br><span class="line">      /// &lt;summary&gt;</span><br><span class="line">       /// 第一个版本为18个字节头固定长度</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       public const int VERSION_0_HEAD_LENGTH = 18;</span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 现有版本21个字节头固定长度</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       public const int VERSION_1_HEAD_LENGTH = 21;</span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 状态码</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       public int Code &#123; get; set; &#125;</span><br><span class="line"></span><br><span class="line">       //0 默认为Protobuf 1 MessagePack 2 = JSON</span><br><span class="line">       public CodecType CodecType &#123; get; set; &#125;</span><br><span class="line"></span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 实际的请求数据</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       public byte[] Data &#123; get; set; &#125;</span><br><span class="line"></span><br><span class="line">       public int Length &#123;</span><br><span class="line">           get</span><br><span class="line">           &#123;</span><br><span class="line">               var hl = Version == 0 ? VERSION_0_HEAD_LENGTH : VERSION_1_HEAD_LENGTH;</span><br><span class="line">               if(Data == null)</span><br><span class="line">               &#123;</span><br><span class="line">                   return hl;</span><br><span class="line">               &#125;</span><br><span class="line"></span><br><span class="line">               return hl + this.Data.Length;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       </span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 消息标识</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       public string Id =&gt; $&quot;&#123;ServiceId&#125;|&#123;MessageId&#125;|&#123;Sequence&#125;&quot;;</span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 调用服务的唯一消息号 确定哪个方法</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       public ushort MessageId &#123; get; set; &#125;</span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 请求的序列号</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       public int Sequence &#123; get; set; &#125;</span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 调用服务的唯一服务号 确定哪个服务</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       public int ServiceId &#123; get; set; &#125;</span><br><span class="line"></span><br><span class="line">       /// &lt;summary&gt;</span><br><span class="line">       /// 协议版本0/1</span><br><span class="line">       /// &lt;/summary&gt;</span><br><span class="line">       public byte Version &#123; get; set; &#125;</span><br><span class="line"></span><br><span class="line">       public InvokeMessageType InvokeMessageType &#123; get; set; &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   public enum InvokeMessageType : byte</span><br><span class="line">   &#123;</span><br><span class="line">       Request = 1,</span><br><span class="line">       Response = 2,</span><br><span class="line">       Notify = 3,</span><br><span class="line">       OnewayRequest=4 //请求且不等待回复</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-3-2-AmpProtocol的实现"><a href="#3-3-2-AmpProtocol的实现" class="headerlink" title="3.3.2 AmpProtocol的实现"></a>3.3.2 AmpProtocol的实现</h3><p>AmpProtocol中的实现主要是对ProtocolMeta描述，代码中已有详细注释，至于打包和解包，就是根据协议Write或者Read对应的数据类型即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line">/// &lt;summary&gt;</span><br><span class="line">    /// Amp Protocol</span><br><span class="line">    /// &lt;/summary&gt;</span><br><span class="line">    public class AmpProtocol : IProtocol&lt;AmpMessage&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        private readonly ISerializer _serializer;</span><br><span class="line"></span><br><span class="line">        public AmpProtocol(ISerializer serializer)</span><br><span class="line">        &#123;</span><br><span class="line">            this._serializer = serializer;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        static readonly ProtocolMeta AMP_PROTOCOL_META = new ProtocolMeta</span><br><span class="line">        &#123;</span><br><span class="line">            InitialBytesToStrip = 0, //读取时需要跳过的字节数</span><br><span class="line">            LengthAdjustment = -5, //包实际长度的纠正，如果包长包括包头和包体，则要减去Length之前的部分</span><br><span class="line">            LengthFieldLength = 4, //长度字段的字节数 整型为4个字节</span><br><span class="line">            LengthFieldOffset = 1, //长度属性的起始（偏移）位</span><br><span class="line">            MaxFrameLength = int.MaxValue, //最大的数据包字节数</span><br><span class="line">            HeartbeatInterval = 30 * 1000 // 30秒没消息发一个心跳包</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        public ProtocolMeta GetProtocolMeta()</span><br><span class="line">        &#123;</span><br><span class="line">            return AMP_PROTOCOL_META;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public void Pack(IBufferWriter writer, AmpMessage message)</span><br><span class="line">        &#123;</span><br><span class="line">            writer.WriteByte(message.Version);</span><br><span class="line">            writer.WriteInt(message.Length);</span><br><span class="line">            writer.WriteInt(message.Sequence);</span><br><span class="line">            writer.WriteByte((byte)message.InvokeMessageType);</span><br><span class="line"></span><br><span class="line">            if (message.Version == 0)</span><br><span class="line">            &#123;</span><br><span class="line">                writer.WriteUShort((ushort)message.ServiceId);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                writer.WriteInt(message.ServiceId);</span><br><span class="line">            &#125;</span><br><span class="line">            writer.WriteUShort(message.MessageId);</span><br><span class="line">            writer.WriteInt(message.Code);</span><br><span class="line">            if(message.Version == 1)</span><br><span class="line">            &#123;</span><br><span class="line">                writer.WriteByte(_serializer.CodecType);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if (message.Data != null)</span><br><span class="line">            &#123;</span><br><span class="line">                writer.WriteBytes(message.Data);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public AmpMessage Parse(IBufferReader reader)</span><br><span class="line">        &#123;</span><br><span class="line">            if (reader.ReadableBytes == 0)</span><br><span class="line">            &#123;</span><br><span class="line">                return null;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            var msg = new AmpMessage &#123;Version = reader.ReadByte()&#125;;</span><br><span class="line"></span><br><span class="line">            int headLength;</span><br><span class="line">            if (msg.Version == 0 )</span><br><span class="line">            &#123;</span><br><span class="line">                headLength = AmpMessage.VERSION_0_HEAD_LENGTH;</span><br><span class="line">                if (reader.ReadableBytes &lt; AmpMessage.VERSION_0_HEAD_LENGTH - 1)</span><br><span class="line">                &#123;</span><br><span class="line">                    throw new RpcCodecException($&quot;decode error ,ReadableBytes=&#123;reader.ReadableBytes+1&#125;,HEAD_LENGTH=&#123;AmpMessage.VERSION_0_HEAD_LENGTH&#125;&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            else if (msg.Version == 1 )</span><br><span class="line">            &#123;</span><br><span class="line">                headLength = AmpMessage.VERSION_1_HEAD_LENGTH;</span><br><span class="line">                if (reader.ReadableBytes &lt; AmpMessage.VERSION_1_HEAD_LENGTH - 1)</span><br><span class="line">                &#123;</span><br><span class="line">                    throw new RpcCodecException($&quot;decode error ,ReadableBytes=&#123;reader.ReadableBytes+1&#125;,HEAD_LENGTH=&#123;AmpMessage.VERSION_1_HEAD_LENGTH&#125;&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                throw new RpcCodecException($&quot;decode error ,&#123;msg.Version&#125; is not support&quot;);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            var length = reader.ReadInt();</span><br><span class="line">            msg.Sequence = reader.ReadInt();</span><br><span class="line">            var type = reader.ReadByte();</span><br><span class="line">            msg.InvokeMessageType = (InvokeMessageType)Enum.ToObject(typeof(InvokeMessageType), type);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            msg.ServiceId = msg.Version == 0 ? reader.ReadUShort() : reader.ReadInt();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            msg.MessageId = reader.ReadUShort();</span><br><span class="line">            msg.Code = reader.ReadInt();</span><br><span class="line"></span><br><span class="line">            if (msg.Version == 1)</span><br><span class="line">            &#123;</span><br><span class="line">                byte codeType = reader.ReadByte();</span><br><span class="line">                if (codeType != this._serializer.CodecType)</span><br><span class="line">                &#123;</span><br><span class="line">                    throw  new RpcCodecException($&quot;CodecType:&#123;codeType&#125; is not Match &#123;this._serializer.CodecType&#125;&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                msg.CodecType = (CodecType)Enum.ToObject(typeof(CodecType), codeType);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                msg.CodecType = CodecType.Protobuf;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            int left = length - headLength;</span><br><span class="line">            if (left &gt; 0)</span><br><span class="line">            &#123;</span><br><span class="line">                if (left &gt; reader.ReadableBytes)</span><br><span class="line">                &#123;</span><br><span class="line">                    throw new RpcCodecException(&quot;message not long enough!&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                msg.Data = new byte[left];</span><br><span class="line">                reader.ReadBytes(msg.Data);</span><br><span class="line">            &#125;</span><br><span class="line">            return msg;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-后记"><a href="#4-后记" class="headerlink" title="4. 后记"></a>4. 后记</h2><p>Peach的产生主要是源于对DotBPE的重构，因为在其他项目中有关于通讯的其他需求，所以这块虽然比较简单，也可比较独立，所以单独开了一个库来实现对DotNetty的封装。另外欢迎各位dotnet core的同学一起学习交流 QQ群号：699044833</p>
+
+  </article>
+  
+  <hr>
+  <blockquote>
+    <p>
+      本文由 <a href="">Xuanye</a> 创作，采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0</a> 国际许可协议。
+    </p>
+    <p>
+      本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。
+    </p>
+  </blockquote>
+  
+</article>
+
+
+<div id="waline"></div>
+
+    </div>
+  </div>
+  <footer>
+  
+  
+  <p id="busuanzi_container_site_pv">
+    本站访问量 <span id="busuanzi_value_site_pv">获取中...</span>
+  </p>
+  
+  <p>
+    Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> | Theme <a target="_blank" rel="noopener" href="https://github.com/syy11cn/hexo-theme-linear">Linear</a> from <a target="_blank" rel="noopener" href="https://syy11.cn">Yiyang Sun</a>
+  </p>
+</footer>
+  
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <script>
+    Waline({
+      el: '#waline',
+      placeholder: '',
+      avatar: 'retro',
+      visitor: true,
+      requiredFields: ['nick', 'mail'],
+      serverURL: 'blog-api-ecru.vercel.app',
+      emoji: [
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ]
+    });
+  </script>
+</body>
+
+</html>

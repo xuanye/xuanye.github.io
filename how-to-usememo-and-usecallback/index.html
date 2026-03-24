@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>如何使用useMemo 和 useCallback：大部分情况下删掉就行了 | 假正经哥哥</title>
+  <meta name="google-site-verification" content="" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta itemprop="name" content="假正经哥哥" />
+  <meta itemprop="description" content="有心思时干有意义的活，没心情时做有意思的事" />
+  <meta itemprop="image" content="" />
+  <link rel="shortcut icon" href="" type="image/x-icon">
+  <!-- keywords and description -->
+  
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <script src="//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  <div id="container">
+    <header>
+  <div class="site-title">
+    <a href="/">
+      假正经哥哥
+    </a>
+  </div>
+  
+  <div class="site-subtitle">
+    有心思时干有意义的活，没心情时做有意思的事
+  </div>
+  
+  
+  <p class="links">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/xuanye/">
+      <img src="/images/links/github.png" alt="xuanye's github">
+    </a>
+    
+  </p>
+  
+</header>
+    <div id="main">
+      <article class="post">
+  <h3 class="date">
+  <time datetime="2022-08-18T06:54:07.000Z">
+    Aug 18, 2022
+  </time>
+</h3>
+  <h1>如何使用useMemo 和 useCallback：大部分情况下删掉就行了</h1>
+  <p class="post-info">
+  
+  
+  <a href="/how-to-usememo-and-usecallback/#waline" class="post-info-item comment-count waline-comment-count" id="/how-to-usememo-and-usecallback/">获取中...</a>
+  <span class="post-info-item view-count waline-visitor-count" id="/how-to-usememo-and-usecallback/">获取中...</span>
+  
+</p>
+  
+<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hooks/" rel="tag">Hooks</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/React/" rel="tag">React</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" rel="tag">最佳实践</a></li></ul>
+
+  
+  <article>
+    <p>如果你对 React 不是完全陌生，你可能至少已经熟悉 useMemo 和 useCallback 钩子了。如果你在一个中大型规模的应用程序上工作，你很可能可以将应用程序的某些部分描述为“无法阅读和调试并难以理解的 useMemo 和 useCallbacks 链条”。这些钩子不知何故具有传播的能力, 不受控制地围绕代码，直到它们完全接管。您发现自己编写它们只是因为它们无处不在并且您周围的每个人都在编写它们。</p>
+<p>你知道可悲的部分吗？所有这一切都是完全没有必要的。如果您现在删除应用程序中 90% 的 useMemo 和 useCallbacks，应用程序依然会很好，甚至可能会变得稍微快一些。不要误会，我并不是说 useMemo 或 useCallback 没用。只是它们的使用仅限于一些非常具体和具体的案例。大多数时候，我们在其中包装一些不必要的东西。</p>
+<p>所以这就是我今天要讲的：开发者在使用useMemo和useCallback时会犯什么样的错误，它们的实际用途是什么，如何正确使用它们。</p>
+<p>应用程序中这些钩子的有毒传播有两个主要来源：</p>
+<ul>
+<li>记忆props以防止重新渲染</li>
+<li>记忆值以避免每次重新渲染时进行费时的计算</li>
+</ul>
+<p>我们将在本文后面介绍它们，但首先：useMemo 和 useCallback 的目的到底是什么？</p>
+<h2 id="为什么我们需要-useMemo-和-useCallback"><a href="#为什么我们需要-useMemo-和-useCallback" class="headerlink" title="为什么我们需要 useMemo 和 useCallback"></a>为什么我们需要 useMemo 和 useCallback</h2><p>答案很简单——重新渲染之间的记忆。如果一个值或一个函数被包装在这些钩子中，react 将在初始渲染期间缓存它，并在连续渲染期间返回对该保存值的引用。没有它，数组、对象或函数等非原始值将在每次重新渲染时从头开始重新创建。比较这些值时，记忆化很有用。这只是你的普通 javascript：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a = &#123; <span class="string">&quot;test&quot;</span>: <span class="number">1</span> &#125;;</span><br><span class="line"><span class="keyword">const</span> b = &#123; <span class="string">&quot;test&quot;</span>: <span class="number">1</span><span class="string">&#x27;&#125;;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">console.log(a === b); // will be false</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">const c = a; // &quot;c&quot; is just a reference to &quot;a&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">console.log(a === c); // will be true</span></span><br></pre></td></tr></table></figure>
+
+<p>或者，如果更接近我们典型的 React 用例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const Component = () =&gt; &#123;</span><br><span class="line">  const a = &#123; test: 1 &#125;;</span><br><span class="line"></span><br><span class="line">  useEffect(() =&gt; &#123;</span><br><span class="line">    // &quot;a&quot; will be compared between re-renders</span><br><span class="line">  &#125;, [a]);</span><br><span class="line"></span><br><span class="line">  // the rest of the code</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>值是 useEffect 钩子的依赖项。在每次重新渲染组件时，React 都会将其与之前的值进行比较。 a 是在组件中定义的对象，这意味着在每次重新渲染时，它将从头开始重新创建。因此，“重新渲染之前”与“重新渲染之后”的比较将返回 false，并且每次重新渲染都会触发 useEffect。</p>
+<p>为了避免这种情况，我们可以将 a 值包装在 useMemo 钩子中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">const Component = () =&gt; &#123;</span><br><span class="line">  // preserving &quot;a&quot; reference between re-renders</span><br><span class="line">  const a = useMemo(() =&gt; (&#123; test: 1 &#125;), []);</span><br><span class="line"></span><br><span class="line">  useEffect(() =&gt; &#123;</span><br><span class="line">    // this will be triggered only when &quot;a&quot; value actually changes</span><br><span class="line">  &#125;, [a]);</span><br><span class="line"></span><br><span class="line">  // the rest of the code</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>现在 useEffect 将仅在 a 值实际更改时触发（即在此实现中从不）。</p>
+<p>与 useCallback 完全相同，只是它对记忆函数更有用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const Component = () =&gt; &#123;</span><br><span class="line">  // preserving onClick function between re-renders</span><br><span class="line">  const fetch = useCallback(() =&gt; &#123;</span><br><span class="line">    console.log(&#x27;fetch some data here&#x27;);</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  useEffect(() =&gt; &#123;</span><br><span class="line">    // this will be triggered only when &quot;fetch&quot; value actually changes</span><br><span class="line">    fetch();</span><br><span class="line">  &#125;, [fetch]);</span><br><span class="line"></span><br><span class="line">  // the rest of the code</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里要记住的最重要的事情是 useMemo 和 useCallback 都只在重新渲染阶段有用。在初始渲染期间，它们不仅无用，甚至有害：它们让 React 做一些额外的工作。这意味着您的应用在初始渲染期间会变得稍微慢一些。如果你的应用程序到处都有成百上千个，这种减速甚至是可以测量的。</p>
+<h2 id="记忆prop以防止重新渲染"><a href="#记忆prop以防止重新渲染" class="headerlink" title="记忆prop以防止重新渲染"></a>记忆prop以防止重新渲染</h2><p>现在我们知道了这些钩子的用途，让我们来看看它们的实际用法。其中最重要且最常用的一种是记忆道具值以防止重新渲染。如果您在应用程序的某处看到以下代码，请发出一些声音：</p>
+<ol>
+<li>必须在 useCallback 中包装 onClick 以防止重新渲染</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const Component = () =&gt; &#123;</span><br><span class="line">  const onClick = useCallback(() =&gt; &#123;</span><br><span class="line">    /* do something */</span><br><span class="line">  &#125;, []);</span><br><span class="line">  return (</span><br><span class="line">    &lt;&gt;</span><br><span class="line">      &lt;button onClick=&#123;onClick&#125;&gt;Click me&lt;/button&gt;</span><br><span class="line">      ... // some other components</span><br><span class="line">    &lt;/&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>必须在 useCallback 中包装 onClick 以防止重新渲染</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">const Item = (&#123; item, onClick, value &#125;) =&gt; &lt;button onClick=&#123;onClick&#125;&gt;&#123;item.name&#125;&lt;/button&gt;;</span><br><span class="line"></span><br><span class="line">const Component = (&#123; data &#125;) =&gt; &#123;</span><br><span class="line">  const value = &#123; a: someStateValue &#125;;</span><br><span class="line"></span><br><span class="line">  const onClick = useCallback(() =&gt; &#123;</span><br><span class="line">    /* do something on click */</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;&gt;</span><br><span class="line">      &#123;data.map((d) =&gt; (</span><br><span class="line">        &lt;Item item=&#123;d&#125; onClick=&#123;onClick&#125; value=&#123;value&#125; /&gt;</span><br><span class="line">      ))&#125;</span><br><span class="line">    &lt;/&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>必须将 value 包装在 useMemo 中，因为它是 memoized onClick 的依赖项：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">const Item = (&#123; item, onClick &#125;) =&gt; &lt;button onClick=&#123;onClick&#125;&gt;&#123;item.name&#125;&lt;/button&gt;;</span><br><span class="line"></span><br><span class="line">const Component = (&#123; data &#125;) =&gt; &#123;</span><br><span class="line">  const value = useMemo(() =&gt; (&#123; a: someStateValue &#125;), [someStateValue]);</span><br><span class="line">  const onClick = useCallback(() =&gt; &#123;</span><br><span class="line">    console.log(value);</span><br><span class="line">  &#125;, [value]);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;&gt;</span><br><span class="line">      &#123;data.map((d) =&gt; (</span><br><span class="line">        &lt;Item item=&#123;d&#125; onClick=&#123;onClick&#125; /&gt;</span><br><span class="line">      ))&#125;</span><br><span class="line">    &lt;/&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这是您做过的事情或看到您周围的其他人做的事情吗？你同意这个用例以及钩子是如何解决它的吗？如果这些问题的答案是“是”，那么恭喜：useMemo 和 useCallback 把你当作人质并不必要地控制了你的生活。在所有示例中，这些钩子都是无用的，不必要的复杂代码，会减慢初始渲染速度并且什么也不会阻止。</p>
+<p>要理解为什么，我们需要记住 React 是如何工作的一件重要的事情：组件可以重新渲染自身的原因。</p>
+<h2 id="为什么组件可以重新渲染自己？"><a href="#为什么组件可以重新渲染自己？" class="headerlink" title="为什么组件可以重新渲染自己？"></a>为什么组件可以重新渲染自己？</h2><p>“当状态或属性值发生变化时，组件会重新渲染自己”是常识。甚至 React 文档也是这样表述的。而且我认为这个陈述正是导致错误结论的原因，即“如果属性不改变（即记忆化），那么它将阻止组件重新渲染”。</p>
+<p>因为组件重新渲染还有一个非常重要的原因：当它的父级重新渲染自己时。或者，如果我们从相反的方向出发：当一个组件重新渲染它自己时，它也会重新渲染它的所有子组件。例如看一下这段代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const App = () =&gt; &#123;</span><br><span class="line">  const [state, setState] = useState(1);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    &lt;div className=&quot;App&quot;&gt;</span><br><span class="line">      &lt;button onClick=&#123;() =&gt; setState(state + 1)&#125;&gt; click to re-render &#123;state&#125;&lt;/button&gt;</span><br><span class="line">      &lt;br /&gt;</span><br><span class="line">      &lt;Page /&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>App 组件有一些状态和一些子组件，包括 Page 组件。单击此处的按钮会发生什么？状态会改变，它将触发 App 的重新渲染，这将触发其所有子组件的重新渲染，包括 Page 组件。它甚至没有道具！</p>
+<p>现在，在这个 Page 组件内部，如果我们也有一些子组件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const Page = () =&gt; &lt;Item /&gt;;</span><br></pre></td></tr></table></figure>
+
+<p>完全是空的，它既没有状态也没有道具。但是它的重新渲染会在 App 重新渲染时触发，因此会触发其 Item 子项的重新渲染。应用程序组件状态更改会触发整个应用程序的重新渲染链。<a target="_blank" rel="noopener" href="https://codesandbox.io/s/parent-children-re-renders-gihtcw?file=/src/App.tsx">请参阅此codesandbox中的完整示例</a>。</p>
+<p>中断这个链的唯一方法是记住其中的一些组件。我们可以使用 useMemo 挂钩，或者更好的是，使用 React.memo util。只有当组件被包裹起来时，React 才会在重新渲染之前停止并检查 props 值是否发生变化。</p>
+<p>记忆组件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const Page = () =&gt; &lt;Item /&gt;;</span><br><span class="line">const PageMemoized = React.memo(Page);</span><br></pre></td></tr></table></figure>
+
+<p>在状态更改的应用程序中使用它：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">const App = () =&gt; &#123;</span><br><span class="line">  const [state, setState] = useState(1);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    ... // same code as before</span><br><span class="line">      &lt;PageMemoized /&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，只有在这种情况下，属性是否被记忆是很重要的</p>
+<p>为了说明，让我们假设 Page 组件具有接受函数的 onClick 属性。如果我在没有先记忆它的情况下将它传递给 Page 会发生什么？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">const App = () =&gt; &#123;</span><br><span class="line">  const [state, setState] = useState(1);</span><br><span class="line">  const onClick = () =&gt; &#123;</span><br><span class="line">    console.log(&#x27;Do something on click&#x27;);</span><br><span class="line">  &#125;;</span><br><span class="line">  return (</span><br><span class="line">    // page will re-render regardless of whether onClick is memoized or not</span><br><span class="line">    &lt;Page onClick=&#123;onClick&#125; /&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>App 会重新渲染，React 会在它的子节点中找到 Page，然后重新渲染它。 onClick 是否包含在 useCallback 中是无关紧要的。</p>
+<p>如果我memoize Page呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">const PageMemoized = React.memo(Page);</span><br><span class="line"></span><br><span class="line">const App = () =&gt; &#123;</span><br><span class="line">  const [state, setState] = useState(1);</span><br><span class="line">  const onClick = () =&gt; &#123;</span><br><span class="line">    console.log(&#x27;Do something on click&#x27;);</span><br><span class="line">  &#125;;</span><br><span class="line">  return (</span><br><span class="line">    // PageMemoized WILL re-render because onClick is not memoized</span><br><span class="line">    &lt;PageMemoized onClick=&#123;onClick&#125; /&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>App 会重新渲染，React 会在它的 children 中找到 PageMemoized，意识到它被包裹在 React.memo 中，停止重新渲染链，并首先检查这个组件上的 props 是否改变。在这种情况下，由于 onClick 是一个 not memoized 函数，props 比较的结果会失败，PageMemoized 会重新渲染自己。最后，一些useCallback的用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const PageMemoized = React.memo(Page);</span><br><span class="line"></span><br><span class="line">const App = () =&gt; &#123;</span><br><span class="line">  const [state, setState] = useState(1);</span><br><span class="line">  const onClick = useCallback(() =&gt; &#123;</span><br><span class="line">    console.log(&#x27;Do something on click&#x27;);</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    // PageMemoized will NOT re-render because onClick is memoized</span><br><span class="line">    &lt;PageMemoized onClick=&#123;onClick&#125; /&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>现在，当 React 停止在 PageMemoized 上检查其 props 时，onClick 将保持不变，并且不会重新渲染 PageMemoized。</p>
+<p>如果我向 PageMemoized 添加另一个非记忆值会发生什么？完全相同的场景：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const PageMemoized = React.memo(Page);</span><br><span class="line"></span><br><span class="line">const App = () =&gt; &#123;</span><br><span class="line">  const [state, setState] = useState(1);</span><br><span class="line">  const onClick = useCallback(() =&gt; &#123;</span><br><span class="line">    console.log(&#x27;Do something on click&#x27;);</span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    // page WILL re-render because value is not memoized</span><br><span class="line">    &lt;PageMemoized onClick=&#123;onClick&#125; value=&#123;[1, 2, 3]&#125; /&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>React 在 PageMemoized 上停止检查它的 props，onClick 将保持不变，但值会改变，并且 PageMemoized 将重新渲染自己。请参阅此处的<a target="_blank" rel="noopener" href="https://codesandbox.io/s/everything-memoized-8oltqg?file=/src/App.tsx">完整示例</a>，尝试删除 memoization 以查看所有内容如何重新开始重新渲染。</p>
+<p>考虑到上述情况，只有一种情况，当在组件上记忆 props 是有意义的：当每个单独的 props 和组件本身都被记忆时。其他一切都只是浪费内存并且不必要地使您的代码复杂化</p>
+<p>如果出现以下情况，请随意从代码中删除所有 useMemo 和 useCallbacks：</p>
+<ul>
+<li>它们作为attribute直接或通过依赖链传递给 DOM 元素</li>
+<li>它们作为Props直接或通过依赖链传递给未记忆的组件</li>
+<li>它们作为 props 直接或通过一系列依赖项传递给一个组件，其中至少有一个 prop 没有被记忆</li>
+</ul>
+<p>为什么要删除，而不仅仅是修复记忆？好吧，如果您因为该区域的重新渲染而遇到性能问题，您会注意到并修复它，不是吗？ 😉 而且由于没有性能问题，所以没有必要修复它。删除无用的 useMemo 和 useCallback 将简化代码并稍微加快初始渲染速度，而不会对现有的重新渲染性能产生负面影响。</p>
+<h2 id="避免在每次渲染时进行费时的计算"><a href="#避免在每次渲染时进行费时的计算" class="headerlink" title="避免在每次渲染时进行费时的计算"></a>避免在每次渲染时进行费时的计算</h2><p>根据 React 文档，<code>useMemo</code> 的主要目标是避免在每次渲染时进行费时的计算。尽管没有暗示什么构成“费时”的计算。因此，开发人员有时会将渲染函数中的几乎所有计算都包含在 <code>useMemo</code> 中。创建一个新日期？过滤、映射或排序数组？创建对象？所有都上useMemo！</p>
+<p>好吧，让我们来看看一些数字。想象一下，我们有一系列国家（大约 250 个），我们希望将它们呈现在屏幕上并允许用户对它们进行排序。</p>
+<p>问题是：对包含 250 个元素的数组进行排序是一项费时的操作吗？感觉像，不是吗？我们可能应该将它包装在 useMemo 中以避免在每次重新渲染时重新计算它，对吧？嗯，很容易测量：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">const List = (&#123; countries &#125;) =&gt; &#123;</span><br><span class="line">  const before = performance.now();</span><br><span class="line"></span><br><span class="line">  const sortedCountries = orderBy(countries, &#x27;name&#x27;, sort);</span><br><span class="line"></span><br><span class="line">  // this is the number we&#x27;re after</span><br><span class="line">  const after = performance.now() - before;</span><br><span class="line"></span><br><span class="line">  return (</span><br><span class="line">    // same</span><br><span class="line">  )</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>最终结果？如果没有使用useMemo，6核 CPU ，对这个包含约 250 个项目的数组进行排序只需不到 2 毫秒。相比之下，呈现这个列表——只是带有文本的原生按钮——需要超过 20 毫秒。 10倍以上！请参阅<a target="_blank" rel="noopener" href="https://codesandbox.io/s/measure-without-memo-tnhggk?file=/src/page.tsx">codesandbox</a>。</p>
+<p>而在现实生活中，数组可能会更小，而且渲染得更复杂，因此更慢。所以性能上的差异甚至会大于10倍。</p>
+<p>我们应该记住这里实际最费时的计算——重新渲染和更新组件，而不是记住数组操作。像这样的东西：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const List = (&#123; countries &#125;) =&gt; &#123;</span><br><span class="line">  const content = useMemo(() =&gt; &#123;</span><br><span class="line">    const sortedCountries = orderBy(countries, &#x27;name&#x27;, sort);</span><br><span class="line"></span><br><span class="line">    return sortedCountries.map((country) =&gt; &lt;Item country=&#123;country&#125; key=&#123;country.id&#125; /&gt;);</span><br><span class="line">  &#125;, [countries, sort]);</span><br><span class="line"></span><br><span class="line">  return content;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>useMemo 将整个组件的不必要的重新渲染时间从大约 20 毫秒降至不到 2 毫秒。</p>
+<p>考虑到上述情况，这是我要介绍的关于记忆“费时”操作的规则：除非您实际计算大数的阶乘，否则请删除所有纯 JavaScript 操作上的 useMemo 钩子。重新渲染子组件永远是你的瓶颈。仅使用 useMemo 来记忆渲染树的重要部分。</p>
+<p><strong>为什么要删除？</strong>把所有东西都记下来不是更好吗？如果我们将它们全部删除，这不是会降低性能的复合效应吗？这里 1 毫秒，那里 2 毫秒，很快我们的应用程序就没有它应该的那么快了……</p>
+<p>有道理。如果不是因为一个警告，这种想法将是 100% 有效的：记忆不是免费的。如果我们使用 useMemo，在初始渲染期间，React 需要缓存结果值——这需要时间。是的，它会很小，在我们上面的应用程序中，记住这些排序的国家需要不到一毫秒的时间。但！这将是真正的复合效应。初始渲染发生在您的应用首次出现在屏幕上时。每个应该显示的组件都会通过它。在具有数百个组件的大型应用程序中，即使其中三分之一的组件记住了某些内容，也可能导致初始渲染增加 10 毫秒、20 毫秒，最坏的情况甚至可能是 100 毫秒。</p>
+<p>另一方面，重新渲染仅在应用程序的某个部分发生更改后才会发生。在一个架构良好的应用程序中，只有这个特定的小部分会被重新渲染，而不是整个应用程序。有多少与上述案例类似的“计算”在那个变化的部分中有多少？ 2-3？假设是 5。每次记忆将节省我们不到 2 毫秒，即总体不到 10 毫秒。 10 毫秒可能会发生也可能不会发生（取决于触发它的事件是否发生），肉眼看不到，并且会在子元素重新渲染中丢失，无论如何这将花费 10 倍。以减慢总是会发生的初始渲染为代价😔。</p>
+<h2 id="今天到此为止"><a href="#今天到此为止" class="headerlink" title="今天到此为止"></a>今天到此为止</h2><p>这是需要处理的大量信息，希望您发现它有用，并且现在渴望审查您的应用程序并摆脱所有无用的 useMemo 和 useCallback 意外接管您的代码。在你离开前快速总结并巩固知识：</p>
+<ul>
+<li>useCallback 和 useMemo 是仅对连续渲染（即重新渲染）有用的钩子，对于初始渲染它们实际上是有害的</li>
+<li>用于 props 的 useCallback 和 useMemo 本身并不会阻止重新渲染。只有当每个道具和组件本身都被记忆时，才能防止重新渲染。一个错误，一切都崩溃了，使那些钩子毫无用处。如果找到它们，请删除它们。</li>
+<li>移除围绕“原生”javascript 操作的 useMemo - 与不可见的组件更新相比，在初始渲染期间只会占用额外的内存和宝贵的时间</li>
+</ul>
+<p>一件小事：考虑到这一切的复杂性和脆弱性，useMemo 和 useCallback 性能优化确实应该是你最后的手段。首先尝试其他性能优化技术。看看那些描述其中一些的文章：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.developerway.com/posts/how-to-write-performant-react-code">如何编写高性能的 React 代码：规则、模式、注意事项</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.developerway.com/posts/why-custom-react-hooks-could-destroy-your-app-performance">为什么自定义反应钩子会破坏您的应用程序性能</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.developerway.com/posts/how-to-write-performant-react-apps-with-context">如何使用 Context 编写高性能的 React 应用程序</a></li>
+<li>React 关键属性：性能列表的最佳实践](<a target="_blank" rel="noopener" href="https://www.developerway.com/posts/react-key-attribute">https://www.developerway.com/posts/react-key-attribute</a>)</li>
+<li><a target="_blank" rel="noopener" href="https://www.developerway.com/posts/components-composition-how-to-get-it-right">React 组件组合：如何正确使用</a></li>
+</ul>
+<p>当然，不用说：先测量！</p>
+<p>愿这一天成为您使用 useMemo 和 useCallback 的最后一天！ ✌🏼</p>
+
+  </article>
+  
+  <hr>
+  <blockquote>
+    <p>
+      本文由 <a href="">Xuanye</a> 创作，采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0</a> 国际许可协议。
+    </p>
+    <p>
+      本站文章除注明转载/出处外，均为本站原创或翻译，转载请务必署名。
+    </p>
+  </blockquote>
+  
+</article>
+
+
+<div id="waline"></div>
+
+    </div>
+  </div>
+  <footer>
+  
+  
+  <p id="busuanzi_container_site_pv">
+    本站访问量 <span id="busuanzi_value_site_pv">获取中...</span>
+  </p>
+  
+  <p>
+    Powered by <a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a> | Theme <a target="_blank" rel="noopener" href="https://github.com/syy11cn/hexo-theme-linear">Linear</a> from <a target="_blank" rel="noopener" href="https://syy11.cn">Yiyang Sun</a>
+  </p>
+</footer>
+  
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+  <script>
+    Waline({
+      el: '#waline',
+      placeholder: '',
+      avatar: 'retro',
+      visitor: true,
+      requiredFields: ['nick', 'mail'],
+      serverURL: 'blog-api-ecru.vercel.app',
+      emoji: [
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/alus',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tw-emoji',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ]
+    });
+  </script>
+</body>
+
+</html>
