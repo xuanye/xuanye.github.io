@@ -1,10 +1,11 @@
-title: xxl-job dotnet core executor执行器开源
-date: 2026-03-22 15:32
+title: Harness Engineering（编排工程）
+date: 2026-03-22 15:32:00
 categories: 翻译
 tags: 
-  - AI
-  -Vibe Coding
 
+  - AI
+  - Vibe Coding
+  - 最佳实践
 
 ---
 
